@@ -1,0 +1,33 @@
+{
+  "name": "@prettier/plugin-ruby",
+  "version": "0.0.0-development",
+  "description": "Prettier Ruby Plugin",
+  "main": "src",
+  "repository": "https://github.com/prettier/prettier-ruby",
+  "author": "Amit Solanki <@iamsolankiamit>",
+  "license": "MIT",
+  "files": ["src", "vendor"],
+  "engines": {
+    "node": ">=6"
+  },
+  "dependencies": {
+    "prettier": "prettier/prettier#dbe0758b487be2da74a3f8cf4036472685d75fb0"
+  },
+  "devDependencies": {
+    "eslint": "^4.14.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jest": "^21.5.0",
+    "eslint-plugin-prettier": "^2.4.0",
+    "jest": "^21.1.0",
+    "jest-runner-eslint": "^0.3.0"
+  },
+  "scripts": {
+    "lint": "jest -c jest.eslint.config.js",
+    "test": "jest",
+    "prettier": "prettier --plugin=. --parser=ruby"
+  },
+  "jest": {
+    "projects": ["<rootDir>/jest.*.config.js"]
+  }
+}
