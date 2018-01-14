@@ -6,7 +6,10 @@
   "repository": "https://github.com/prettier/prettier-ruby",
   "author": "Amit Solanki <@iamsolankiamit>",
   "license": "MIT",
-  "files": ["src", "vendor"],
+  "files": [
+    "src",
+    "vendor"
+  ],
   "engines": {
     "node": ">=6"
   },
@@ -28,6 +31,8 @@
     "prettier": "prettier --plugin=. --parser=ruby"
   },
   "jest": {
-    "projects": ["<rootDir>/jest.*.config.js"]
+    "projects": [
+      "<rootDir>/jest.*.config.js"
+    ]
   }
 }

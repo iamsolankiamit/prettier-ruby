@@ -4,16 +4,12 @@ const spawnSync = require("child_process").spawnSync;
 const path = require("path");
 
 function parseText(text /*, pythonExecutable */) {
-  const executionResult = spawnSync(
-    pythonExecutable,
-    [path.join(__dirname, "../vendor/ruby/astexport.rb")],
-    {
-      input: text
-    }
-  );
+  const executionResult = spawnSync("ruby", [
+    path.join(__dirname, "../vendor/ruby/astexport.rb"),
+    text
+  ]);
 
   const error = executionResult.stderr.toString();
-
   if (error) {
     throw new Error(error);
   }
@@ -26,6 +22,7 @@ function parse(text, parsers, opts) {
   const executionResult = parseText(text /*,  pythonExectuable */);
 
   const res = executionResult.stdout.toString();
+  console.log(res);
   const ast = JSON.parse(res);
   return ast;
 }
