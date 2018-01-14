@@ -10,7 +10,7 @@ const languages = [
     since: "1.9.2", // FIXME: Fix this before releasing.
     parsers: ["ruby"],
     extensions: [".rb"],
-    tmScope: "source.py",
+    tmScope: "source.rb",
     aceMode: "text",
     linguistLanguageId: 303,
     vscodeLanguageIds: ["ruby"]

@@ -17,12 +17,10 @@ function parseText(text /*, pythonExecutable */) {
   return executionResult;
 }
 
-function parse(text, parsers, opts) {
-  // const pythonExectuable = `python${opts.pythonVersion == "2" ? "" : "3"}`;
-  const executionResult = parseText(text /*,  pythonExectuable */);
+function parse(text) {
+  const executionResult = parseText(text);
 
   const res = executionResult.stdout.toString();
-  console.log(res);
   const ast = JSON.parse(res);
   return ast;
 }
