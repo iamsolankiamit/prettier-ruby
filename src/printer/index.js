@@ -82,7 +82,11 @@ function genericPrint(path, options, print) {
 
   switch (n.ast_type) {
     case "class": {
-      return concat([printBody(path, print), hardline]);
+      return concat([
+        group(concat(["class", line, path.call(print, "name")])),
+        indent(join(concat([hardline]), path.map(print, "body"))),
+        group(concat([hardline, "end"]))
+      ]);
     }
 
     case "begin": {

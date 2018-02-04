@@ -256,7 +256,9 @@ class Processor < AST::Processor
 
   def on_class(node)
     { line: node.loc.line,
-      ast_type: node.type, body: node.children.map { |c| process(c) },
+      ast_type: node.type,
+      name: process(node.children[0])[:body],
+      body: node.children[1..-1].map { |c| process(c) },
       source: Unparser.unparse(node) }
   end
 
@@ -267,7 +269,7 @@ class Processor < AST::Processor
       source: Unparser.unparse(node) }
   end
 
-  def on_args(node)
+  def on_args(node) # FIXME: Blank args are not handled yet!
     { line: node.loc.line,
       ast_type: node.type,
       body: node.children.map { |c| process(c) },
