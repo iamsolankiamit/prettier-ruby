@@ -11,7 +11,7 @@ const AST_COMPARE = process.env["AST_COMPARE"];
 function run_spec(dirname, parsers) {
   const options = Object.assign({
     plugins: ["."],
-    tabWidth: 4
+    tabWidth: 2
   });
 
   /* instabul ignore if */

@@ -1,12 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`args.rb 1`] = `
-def hello arguments
-  puts arguments
-end
+exports[`call_1.rb 1`] = `
+puts 123
+
+greet('userName')
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def hello(arguments)
-  puts arguments
-end
+puts 123
+
+greet("userName")
 
 `;

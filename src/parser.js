@@ -3,7 +3,7 @@
 const spawnSync = require("child_process").spawnSync;
 const path = require("path");
 
-function parseText(text /*, pythonExecutable */) {
+function parseText(text) {
   const executionResult = spawnSync("ruby", [
     path.join(__dirname, "../vendor/ruby/astexport.rb"),
     text
