@@ -25,6 +25,20 @@ class Processor < AST::Processor
       source: Unparser.unparse(node) }
   end
 
+  def on_int(node)
+    { line: node.loc.line, 
+        ast_type: node.type, 
+        body: node.children[0], 
+        source: Unparser.unparse(node) }
+  end
+
+  def on_hash(node)
+    { line: node.loc.line,
+      ast_type: node.type,
+      body: node.children[0],
+      source: Unparser.unparse(node)}
+  end
+
   def on_arg(node) 
     { line: node.loc.line, 
       ast_type: node.type, 
@@ -177,8 +191,9 @@ class Processor < AST::Processor
 
   def on_optarg(node)
     { line: node.loc.line, 
-      ast_type: node.type, 
-      body: node.children[0], 
+      ast_type: node.type,
+      arg: node.children[0],
+      value: node.children[1..-1].map{ |c| process(c) }, 
       source: Unparser.unparse(node) }
   end
 

@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`args_mixed_1.rb 1`] = `
+def hello a, example = "1", *b
+  puts a, example, b
+end
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def hello(a, example = "1", *b)
+    puts a, example, b
+end
+
+`;
+
+exports[`args_mixed_2.rb 1`] = `
+def hello a, example = 1, *b
+  puts a, example, b
+end
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def hello(a, example = 1, *b)
+    puts a, example, b
+end
+
+`;
+
+exports[`args_mixed_3.rb 1`] = `
+def hello a, example = {}, *b
+  puts a, example, b
+end
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def hello(a, example = {}, *b)
+    puts a, example, b
+end
+
+`;

@@ -72,6 +72,10 @@ function genericPrint(path, options, print) {
     return n;
   }
 
+  if (typeof n === "number") {
+    return n;
+  }
+
   if (tokens.hasOwnProperty(n.ast_type)) {
     return tokens[n.ast_type];
   }
@@ -86,7 +90,7 @@ function genericPrint(path, options, print) {
     }
 
     case "send": {
-      const body = concat(path.map(print, "body"));
+      const body = join(concat([", ", softline]), path.map(print, "body"));
       let finalBody = body;
       if (!keywords.hasOwnProperty(n.name)) {
         finalBody = group(concat(["(", body, ")"]));
@@ -126,6 +130,13 @@ function genericPrint(path, options, print) {
 
     case "args": {
       return join(concat([", ", softline]), path.map(print, "body"));
+    }
+
+    case "optarg": {
+      return concat([
+        group(concat([path.call(print, "arg"), " = "])),
+        group(concat(path.map(print, "value")))
+      ]);
     }
 
     case "arg": {
