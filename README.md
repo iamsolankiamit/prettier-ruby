@@ -2,13 +2,27 @@
 
 Check back soon :)
 
-### Update
+### This is very experimental
 
-It now supports updating function definations.
+## what it currently does
 
-## This is still very experimental.
+* [x] handle arguments
+* [x] handle mixed arguments
+* [x] handle optional arguments
+* [x] handle rest arguments
+* [x] handle class
+* [x] handle method defs
+* [x] handle method calls
+* [x] handle Modules
+* [x] handle If conditions
+* [x] handle hashes
 
-All it does right now is to extract some AST nodes into JSON for prettier to process and print an updated version via a generic Printer (Only Word limits are working as of now).
+## Priority TODo
+
+* [] Remove dependency on Ruby-parser gem (so we can support many versions)
+* [] Remove dependency on Unparser gem
+
+#### there is lot more todo, feel free to submit PRs for more test cases.
 
 ---
 
