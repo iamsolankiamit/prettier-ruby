@@ -19,8 +19,8 @@ Check back soon :)
 
 ## Priority TODo
 
-* [] Remove dependency on Ruby-parser gem (so we can support many versions)
-* [] Remove dependency on Unparser gem
+* [ ] Remove dependency on Ruby-parser gem (so we can support many versions)
+* [ ] Remove dependency on Unparser gem
 
 #### there is lot more todo, feel free to submit PRs for more test cases.
 
