@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`if.rb 1`] = `
+if x == true
+  puts 'yes'
+elsif x == false
+  puts 'nah'
+elsif x == 1
+  puts 'ONE'
+else
+  puts 'default'
+end~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+if (x == true)
+  puts("yes")
+else
+  if (x == false)
+    puts("nah")
+  else
+    if (x == 1)
+      puts("ONE")
+    else
+      puts("default")
+    end
+  end
+end
+
+`;

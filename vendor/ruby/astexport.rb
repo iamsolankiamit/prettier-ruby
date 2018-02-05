@@ -228,9 +228,17 @@ class Processor < AST::Processor
   def on_send(node)
     { line: node.loc.line,
       ast_type: node.type,
+      to: process(node.children[0]),
       name: node.children[1],
       body: node.children[2..-1].map { |c| process(c) },
       source: Unparser.unparse(node) }
+  end
+
+  def on_self(node)
+    { line: node.loc.line,
+      ast_type: node.type,
+      body: node.children[0],
+      source: Unparser.unparse(node)}
   end
 
   def on_shadowarg(node)
@@ -266,6 +274,14 @@ class Processor < AST::Processor
     { line: node.loc.line,
       ast_type: node.type,
       body: node.children[0],
+      source: Unparser.unparse(node) }
+  end
+
+  def on_if(node)
+    { line: node.loc.line,
+      ast_type: node.type,
+      condition: process(node.children[0]),
+      body: node.children[1..-1].map { |c| process(c) },
       source: Unparser.unparse(node) }
   end
 
