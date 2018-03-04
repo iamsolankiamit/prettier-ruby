@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`until.rb 1`] = `
+until x > 5
+  do_something
+  do_something_else
+end
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+(until
+  (send
+    (send nil :x) :>
+    (int 5))
+  (begin
+    (send nil :do_something)
+    (send nil :do_something_else)))
+
+`;
+
+exports[`until_2.rb 1`] = `
+do_something until some_condition
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+(until
+  (send nil :some_condition)
+  (send nil :do_something))
+
+`;

@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lamda.rb 1`] = `
+l = ->(x, y) { something(x, y) }
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+l = lambda do |x, y|
+  something(x, y)
+end
+
+`;
+
+exports[`lamda_2.rb 1`] = `
+l = -> { something }
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+l = lambda do
+  something
+end
+
+`;
