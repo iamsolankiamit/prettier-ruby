@@ -91,7 +91,7 @@ function genericPrint(path, options, print) {
     }
 
     case "begin": {
-      return concat([printBody(path, print)]);
+      return join(concat([hardline]), path.map(print, "body"));
     }
 
     case "str": {
@@ -185,6 +185,27 @@ function genericPrint(path, options, print) {
 
     case "lvar": {
       return n.lvar;
+    }
+
+    case "until": {
+      const _until = [];
+      _until.push("until", line, group(path.call(print, "condition")));
+
+      const body = [];
+      const isElse = n.else_part;
+      body.push(
+        group(concat(_until)),
+        indent(concat([hardline, path.call(print, "body")])),
+        hardline
+      );
+      if (isElse) {
+        const elsePart = path.call(print, "else_part");
+        body.push("else", indent(concat([hardline, elsePart])));
+        body.push(hardline, "end");
+      } else {
+        body.push("end");
+      }
+      return concat(body);
     }
 
     case "if": {
