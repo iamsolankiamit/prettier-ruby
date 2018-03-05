@@ -15,7 +15,11 @@ Check back soon :)
 * [x] handle method calls
 * [x] handle Modules
 * [x] handle If conditions
+* [x] handle elsif conditions
+* [x] handle else conditions
 * [x] handle hashes
+* [ ] handle "and" conditions
+* [ ] handle "or" conditions
 
 ## Priority TODo
 
