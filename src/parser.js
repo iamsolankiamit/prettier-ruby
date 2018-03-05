@@ -5,10 +5,10 @@ const path = require("path");
 
 function parseText(text) {
   const executionResult = spawnSync("ruby", [
+    "-W0",
     path.join(__dirname, "../vendor/ruby/astexport.rb"),
     text
   ]);
-
   const error = executionResult.stderr.toString();
   if (error) {
     throw new Error(error);

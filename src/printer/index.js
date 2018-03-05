@@ -12,6 +12,7 @@ const line = docBuilders.line;
 const softline = docBuilders.softline;
 const group = docBuilders.group;
 const indent = docBuilders.indent;
+const dedent = docBuilders.dedent;
 
 function printRubyString(raw, options) {
   // `rawContent` is the string exactly like it appeared in the input source
@@ -101,6 +102,14 @@ function genericPrint(path, options, print) {
       return n.body.toString();
     }
 
+    case "true": {
+      return "true";
+    }
+
+    case "false": {
+      return "false";
+    }
+
     case "restarg": {
       return "*" + n.body;
     }
@@ -108,10 +117,25 @@ function genericPrint(path, options, print) {
     case "send": {
       const body = join(concat([", ", softline]), path.map(print, "body"));
       let finalBody = group(concat(["(", body, ")"]));
+      const name = n.name;
       if (keywords.hasOwnProperty(n.name)) {
         finalBody = group(concat([line, body]));
       }
-      const parts = group(concat([n.name, finalBody]));
+      if (!body.parts.length) {
+        finalBody = "";
+      }
+      let parts = group(concat([name, finalBody]));
+      if (n.to) {
+        parts = group(
+          concat([
+            path.call(print, "to"),
+            line,
+            name,
+            line,
+            concat(path.map(print, "body"))
+          ])
+        );
+      }
       return parts;
     }
 
@@ -161,6 +185,32 @@ function genericPrint(path, options, print) {
 
     case "lvar": {
       return n.lvar;
+    }
+
+    case "if": {
+      const _if = [];
+      _if.push("if", line, group(path.call(print, "condition")));
+
+      const body = [];
+      const isElse = n.else_part;
+      const isElseIf = isElse && n.else_part.ast_type === "if";
+      body.push(
+        group(concat(_if)),
+        indent(concat([hardline, path.call(print, "body")])),
+        hardline
+      );
+      if (isElse) {
+        const elsePart = path.call(print, "else_part");
+        if (isElseIf) {
+          body.push("els", dedent(concat([elsePart])));
+        } else {
+          body.push("else", indent(concat([hardline, elsePart])));
+          body.push(hardline, "end");
+        }
+      } else {
+        body.push("end");
+      }
+      return concat(body);
     }
 
     default:

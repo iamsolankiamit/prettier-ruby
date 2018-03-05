@@ -18,6 +18,7 @@ class Processor < AST::Processor
     @results
   end
 
+
   def on_begin(node)
     { ast_type: node.type,
       line: node.children[0].loc.line,
@@ -26,6 +27,20 @@ class Processor < AST::Processor
   end
 
   def on_int(node)
+    { line: node.loc.line,
+      ast_type: node.type,
+      body: node.children[0],
+      source: Unparser.unparse(node) }
+  end
+
+  def on_true(node)
+    { line: node.loc.line,
+      ast_type: node.type,
+      body: node.children[0],
+      source: Unparser.unparse(node) }
+  end
+
+  def on_false(node)
     { line: node.loc.line,
       ast_type: node.type,
       body: node.children[0],
@@ -281,7 +296,8 @@ class Processor < AST::Processor
     { line: node.loc.line,
       ast_type: node.type,
       condition: process(node.children[0]),
-      body: node.children[1..-1].map { |c| process(c) },
+      body: process(node.children[1]),
+      else_part: process(node.children[2]),
       source: Unparser.unparse(node) }
   end
 

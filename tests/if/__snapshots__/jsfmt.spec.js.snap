@@ -9,19 +9,27 @@ elsif x == 1
   puts 'ONE'
 else
   puts 'default'
-end~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-if (x == true)
-  puts("yes")
+end
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+if x == true
+  puts "yes"
+elsif x == false
+  puts "nah"
+elsif x == 1
+  puts "ONE"
 else
-  if (x == false)
-    puts("nah")
-  else
-    if (x == 1)
-      puts("ONE")
-    else
-      puts("default")
-    end
-  end
+  puts "default"
+end
+
+`;
+
+exports[`if_2.rb 1`] = `
+if true
+  puts "this is true"
+end
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+if true
+  puts "this is true"
 end
 
 `;
