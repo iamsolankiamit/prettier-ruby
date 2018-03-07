@@ -200,8 +200,19 @@ class Processor < AST::Processor
 
   def on_lvasgn(node)
     { line: node.loc.line,
-      ast_type: node.type, body: node.children[0],
+      ast_type: node.type,
+      left: node.children[0],
+      right: node.children[1..-1].map{ |c| process(c) },
       source: Unparser.unparse(node) }
+  end
+
+  def on_case(node)
+    { line: node.loc.line,
+      ast_type: node.type,
+      case: node.children[0],
+      body: node.children[1..-1].map{ |c| process(c)},
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_nth_ref(node)

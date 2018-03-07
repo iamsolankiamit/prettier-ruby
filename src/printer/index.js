@@ -187,6 +187,12 @@ function genericPrint(path, options, print) {
       return n.lvar;
     }
 
+    case "lvasgn": {
+      const left = group(concat([n.left, " = "]));
+      const right = join(concat([line]), path.map(print, "right"));
+      return concat([left, right]);
+    }
+
     case "while": {
       const _while = [];
       _while.push("while", line, group(path.call(print, "condition")));
