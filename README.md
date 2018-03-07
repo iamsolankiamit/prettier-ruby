@@ -18,6 +18,7 @@ Check back soon :)
 * [x] handle elsif conditions
 * [x] handle else conditions
 * [x] handle until conditions
+* [x] handle while conditions
 * [x] handle hashes
 * [ ] handle "and" conditions
 * [ ] handle "or" conditions
