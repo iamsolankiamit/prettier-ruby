@@ -6,21 +6,18 @@ while x > 5
   do_something_else
 end
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-(while
-  (send
-    (send nil :x) :>
-    (int 5))
-  (begin
-    (send nil :do_something)
-    (send nil :do_something_else)))
+while x > 5
+  do_something
+  do_something_else
+end
 
 `;
 
 exports[`while_2.rb 1`] = `
 do_something while some_condition
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-(while
-  (send nil :some_condition)
-  (send nil :do_something))
+while some_condition
+  do_something
+end
 
 `;

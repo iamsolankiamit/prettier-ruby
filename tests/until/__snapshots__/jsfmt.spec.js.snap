@@ -4,14 +4,10 @@ exports[`until.rb 1`] = `
 until x > 5
   do_something
   do_something_else
-  do_something_else
-  do_something_else
 end
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 until x > 5
   do_something
-  do_something_else
-  do_something_else
   do_something_else
 end
 

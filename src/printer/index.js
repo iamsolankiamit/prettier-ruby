@@ -187,6 +187,25 @@ function genericPrint(path, options, print) {
       return n.lvar;
     }
 
+    case "while": {
+      const _while = [];
+      _while.push("while", line, group(path.call(print, "condition")));
+
+      const body = [];
+      body.push(
+        group(concat(_while)),
+        indent(
+          concat([
+            hardline,
+            join(concat([hardline, hardline]), path.map(print, "body"))
+          ])
+        ),
+        hardline,
+        group("end")
+      );
+      return concat(body);
+    }
+
     case "until": {
       const _until = [];
       _until.push("until", line, group(path.call(print, "condition")));
