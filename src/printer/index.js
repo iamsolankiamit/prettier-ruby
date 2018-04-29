@@ -115,28 +115,48 @@ function genericPrint(path, options, print) {
     }
 
     case "send": {
+      // Join the items in Body using commas.
       const body = join(concat([", ", softline]), path.map(print, "body"));
+      // default to adding brackets
       let finalBody = group(concat(["(", body, ")"]));
+      // name is the item which is being sent
       const name = n.name;
+      // if the item is a ruby method, then avoid the brackets
       if (keywords.hasOwnProperty(n.name)) {
         finalBody = group(concat([line, body]));
       }
+      // if the body is black print nothing
       if (!body.parts.length) {
         finalBody = "";
       }
-      let parts = group(concat([name, finalBody]));
+      const parts = [];
+      // items are sent "to" something.
       if (n.to) {
-        parts = group(
-          concat([
-            path.call(print, "to"),
-            line,
-            name,
-            line,
-            concat(path.map(print, "body"))
-          ])
-        );
+        // if it is a chain of send (sent via the dot operator)
+        let dotConnected = false;
+        if (n.to.ast_type === "send" && !n.body.length) {
+          dotConnected = true;
+        }
+        // Usually the last item (Class name, Module name, etc)
+        if (n.to.ast_type === "const") {
+          dotConnected = true;
+        }
+        parts.push(path.call(print, "to"));
+        if (dotConnected) {
+          parts.push(".");
+        } else {
+          parts.push(line);
+        }
+        parts.push(name);
+        // we don't add space if it is dot connected
+        if (!dotConnected) {
+          parts.push(line);
+        }
+        parts.push(concat(path.map(print, "body")));
+      } else {
+        parts.push(name, finalBody);
       }
-      return parts;
+      return group(concat(parts));
     }
 
     case "File": {
@@ -190,7 +210,7 @@ function genericPrint(path, options, print) {
     case "lvasgn": {
       const left = group(concat([n.left, " = "]));
       const right = join(concat([line]), path.map(print, "right"));
-      return concat([left, right]);
+      return concat([left, group(right)]);
     }
 
     case "while": {
@@ -257,6 +277,133 @@ function genericPrint(path, options, print) {
         body.push("end");
       }
       return concat(body);
+    }
+
+    case "block": {
+      let singleLineBlock = false;
+      if (n.body.length === 1) {
+        singleLineBlock = true;
+        if (n.of.name === "lambda") {
+          n.of.name = "->";
+        }
+      }
+      const _of = path.call(print, "of");
+      let body = [];
+      let argsContent = "";
+      if (n.args.body.length > 0) {
+        const args = group(path.call(print, "args"));
+        argsContent = concat([
+          singleLineBlock ? "(" : "|",
+          args,
+          singleLineBlock ? ")" : "|"
+        ]);
+      }
+      body = path.map(print, "body");
+      const blockHead = group(
+        concat([
+          _of,
+          singleLineBlock ? argsContent : "",
+          line,
+          singleLineBlock ? "{" : "do",
+          line,
+          singleLineBlock ? "" : argsContent
+        ])
+      );
+
+      const bodyIndented = indent(
+        group(concat([singleLineBlock ? "" : hardline, concat(body)]))
+      );
+      const end = singleLineBlock
+        ? dedent(concat([line, "}"]))
+        : dedent(concat([hardline, "end"]));
+      return concat([blockHead, bodyIndented, end]);
+    }
+
+    case "array": {
+      return group(
+        concat([
+          "[",
+          join(concat([", ", softline]), path.map(print, "body")),
+          "]"
+        ])
+      );
+    }
+
+    case "hash": {
+      let body = path.map(print, "body");
+      if (body.length > 0) {
+        body = concat([
+          indent(
+            group(concat([line, group(join(concat([", ", softline]), body))]))
+          ),
+          line
+        ]);
+      } else {
+        body = "";
+      }
+
+      return group(concat(["{", body, "}"]));
+    }
+
+    case "pair": {
+      return group(
+        concat([
+          group(concat([n.symbol.body, ":"])),
+          line,
+          path.call(print, "value")
+        ])
+      );
+    }
+
+    case "sym": {
+      return concat([":", path.call(print, "body")]);
+    }
+
+    case "const": {
+      return concat([path.call(print, "body")]);
+    }
+    case "case": {
+      const _case = [];
+      _case.push("case", line, group(path.call(print, "condition")));
+      const body = [];
+      let hasElse = false;
+      const lastBodyItem = n.body[n.body.length - 1];
+      if (lastBodyItem && lastBodyItem.ast_type !== "when") {
+        hasElse = true;
+      }
+      let astBody = path.map(print, "body");
+      let elsePart;
+      if (hasElse) {
+        elsePart = astBody[astBody.length - 1];
+        astBody = astBody.slice(0, astBody.length - 1);
+      }
+      const parts = [];
+      body.push(hardline, concat(astBody));
+      if (hasElse) {
+        body.push("else", indent(concat([hardline, elsePart])));
+      }
+      parts.push(group(concat(_case)), concat(body), hardline);
+      parts.push("end");
+      return concat(parts);
+    }
+
+    case "when": {
+      const _when = [];
+      _when.push("when", line, group(path.call(print, "condition")));
+
+      const body = [];
+      body.push(
+        group(concat(_when)),
+        indent(concat([hardline, concat(path.map(print, "body"))])),
+        hardline
+      );
+      return concat(body);
+    }
+
+    case "irange": {
+      const range = [];
+      range.push(path.call(print, "from"), "..", path.call(print, "to"));
+      return concat(range);
     }
 
     default:

@@ -47,6 +47,13 @@ class Processor < AST::Processor
       source: Unparser.unparse(node) }
   end
 
+  def on_array(node)
+    { line: node.loc.line,
+      ast_type: node.type,
+      body: node.children.map { |c| process(c) },
+      source: Unparser.unparse(node) }
+  end
+
   def on_hash(node)
     { line: node.loc.line,
       ast_type: node.type,
@@ -57,7 +64,17 @@ class Processor < AST::Processor
   def on_pair(node)
     { line: node.loc.line,
       ast_type: node.type,
-      body: node.children.map { |c| process(c) },
+      symbol: process(node.children[0]),
+      value: process(node.children[1]),
+      source: Unparser.unparse(node) }
+  end
+
+  def on_block(node)
+    { line: node.loc.line,
+      ast_type: node.type,
+      of: process(node.children[0]),
+      args: process(node.children[1]),
+      body: node.children[2..-1].map { |c| process(c) },
       source: Unparser.unparse(node) }
   end
 
@@ -209,8 +226,26 @@ class Processor < AST::Processor
   def on_case(node)
     { line: node.loc.line,
       ast_type: node.type,
-      case: node.children[0],
+      condition: process(node.children[0]),
       body: node.children[1..-1].map{ |c| process(c)},
+      source: Unparser.unparse(node)
+    }
+  end
+
+  def on_when(node)
+    { line: node.loc.line,
+      ast_type: node.type,
+      condition: process(node.children[0]),
+      body: node.children[1..-1].map{ |c| process(c)},
+      source: Unparser.unparse(node)
+    }
+  end
+
+  def on_irange(node)
+    { line: node.loc.line,
+      ast_type: node.type,
+      from: process(node.children[0]),
+      to: process(node.children[1]),
       source: Unparser.unparse(node)
     }
   end
@@ -329,11 +364,18 @@ class Processor < AST::Processor
       source: Unparser.unparse(node) }
   end
 
-  def on_args(node) # FIXME: Blank args are not handled yet!
-    { line: node.loc.line,
-      ast_type: node.type,
-      body: node.children.map { |c| process(c) },
-      source: Unparser.unparse(node) }
+  def on_args(node)
+    if node.children.length > 0
+      return { line: node.loc.line,
+        ast_type: node.type,
+        body: node.children.map { |c| process(c) },
+        source: Unparser.unparse(node) }
+    else 
+      return { line: nil,
+        ast_type: "args",
+        body: [],
+        source: Unparser.unparse(node) }
+    end
   end
 end
 
