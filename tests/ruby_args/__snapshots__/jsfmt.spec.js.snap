@@ -10,3 +10,14 @@ def hello(arguments)
 end
 
 `;
+
+exports[`args_1.rb 1`] = `
+def hello
+  puts 'no args'
+end
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def hello
+  puts "no args"
+end
+
+`;

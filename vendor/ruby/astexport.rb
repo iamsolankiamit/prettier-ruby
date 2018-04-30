@@ -10,14 +10,14 @@ class Processor < AST::Processor
       ast_type: 'File',
       line: 0,
       body: [processed_ast],
-      comments: @comment_processor.get_results, source: Unparser.unparse(node)
+      comments: @comment_processor.get_results,
+      source: Unparser.unparse(node)
     }
   end
 
   def get_results
     @results
   end
-
 
   def on_begin(node)
     { ast_type: node.type,
@@ -183,7 +183,8 @@ class Processor < AST::Processor
   def on_ivasgn(node)
     { line: node.loc.line,
       ast_type: node.type,
-      body: node.children[0],
+      left: node.children[0],
+      right: node.children[1..-1].map{ |c| process(c) },
       source: Unparser.unparse(node) }
   end
 
@@ -364,6 +365,24 @@ class Processor < AST::Processor
       source: Unparser.unparse(node) }
   end
 
+  def on_return(node)
+    {
+      line: node.loc.line,
+      ast_type: node.type,
+      value: process(node.children[0]),
+      source: Unparser.unparse(node)
+    }
+  end
+
+  def on_nil(node)
+    {
+      line: node.loc.line,
+      ast_type: node.type,
+      body: "nil",
+      source: Unparser.unparse(node)
+    }
+  end
+  
   def on_args(node)
     if node.children.length > 0
       return { line: node.loc.line,
@@ -376,6 +395,15 @@ class Processor < AST::Processor
         body: [],
         source: Unparser.unparse(node) }
     end
+  end
+
+  def on_masgn(node)
+    {
+      line: node.loc.line,
+      ast_type: node.type,
+      body: node.children.map { |c| process(c) },
+      source: Unparser.unparse(node)
+    }
   end
 end
 

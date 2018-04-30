@@ -125,7 +125,7 @@ function genericPrint(path, options, print) {
       if (keywords.hasOwnProperty(n.name)) {
         finalBody = group(concat([line, body]));
       }
-      // if the body is black print nothing
+      // if the body is blank print nothing
       if (!body.parts.length) {
         finalBody = "";
       }
@@ -137,22 +137,37 @@ function genericPrint(path, options, print) {
         if (n.to.ast_type === "send" && !n.body.length) {
           dotConnected = true;
         }
+        // if (n.to.ast_type === "send" && n.name === "[]") {
+        //   dotConnected = true;
+        // }
         // Usually the last item (Class name, Module name, etc)
-        if (n.to.ast_type === "const") {
+        if (n.to.ast_type !== "send") {
           dotConnected = true;
         }
         parts.push(path.call(print, "to"));
-        if (dotConnected) {
-          parts.push(".");
-        } else {
+        if (n.name !== "[]") {
+          if (dotConnected) {
+            parts.push(".");
+          } else {
+            parts.push(line);
+          }
+          parts.push(name);
+        }
+        // we don't add space if it is dot connected
+        if (n.name !== "[]" && !dotConnected) {
           parts.push(line);
         }
-        parts.push(name);
-        // we don't add space if it is dot connected
-        if (!dotConnected) {
-          parts.push(line);
+        if (n.name === "[]") {
+          parts.push("[");
+        } else if (dotConnected && n.body.length) {
+          parts.push("(");
         }
         parts.push(concat(path.map(print, "body")));
+        if (n.name === "[]") {
+          parts.push("]");
+        } else if (dotConnected && n.body.length) {
+          parts.push(")");
+        }
       } else {
         parts.push(name, finalBody);
       }
@@ -170,17 +185,18 @@ function genericPrint(path, options, print) {
 
       const parts = [];
 
+      parts.push(group(concat(def)));
+      const args = [
+        "(",
+        indent(concat([softline, path.call(print, "args")])),
+        softline,
+        ")"
+      ];
+      if (n.args) {
+        parts.push(group(concat(args)));
+      }
       parts.push(
-        group(concat(def)),
-        group(
-          concat([
-            "(",
-            indent(concat([softline, path.call(print, "args")])),
-            softline,
-            ")"
-          ])
-        ),
-        indent(concat([hardline, printBody(path, print)])),
+        indent(concat([hardline, concat(path.map(print, "body"))])),
         hardline,
         group("end")
       );
@@ -203,14 +219,27 @@ function genericPrint(path, options, print) {
       return n.arg;
     }
 
+    case "ivar": {
+      return path.call(print, "body");
+    }
+
     case "lvar": {
       return n.lvar;
     }
 
+    case "ivasgn":
     case "lvasgn": {
       const left = group(concat([n.left, " = "]));
       const right = join(concat([line]), path.map(print, "right"));
       return concat([left, group(right)]);
+    }
+
+    case "return": {
+      return group(concat(["return", line, path.call(print, "value")]));
+    }
+
+    case "nil": {
+      return n.body;
     }
 
     case "while": {
@@ -281,9 +310,11 @@ function genericPrint(path, options, print) {
 
     case "block": {
       let singleLineBlock = false;
+      let isLambda = false;
       if (n.body.length === 1) {
         singleLineBlock = true;
         if (n.of.name === "lambda") {
+          isLambda = true;
           n.of.name = "->";
         }
       }
@@ -293,30 +324,36 @@ function genericPrint(path, options, print) {
       if (n.args.body.length > 0) {
         const args = group(path.call(print, "args"));
         argsContent = concat([
-          singleLineBlock ? "(" : "|",
+          singleLineBlock && isLambda ? "(" : "|",
           args,
-          singleLineBlock ? ")" : "|"
+          singleLineBlock && isLambda ? ")" : "|"
         ]);
       }
       body = path.map(print, "body");
       const blockHead = group(
         concat([
           _of,
-          singleLineBlock ? argsContent : "",
+          singleLineBlock && isLambda ? argsContent : "",
           line,
           singleLineBlock ? "{" : "do",
           line,
-          singleLineBlock ? "" : argsContent
+          singleLineBlock && isLambda ? "" : argsContent
         ])
       );
 
       const bodyIndented = indent(
-        group(concat([singleLineBlock ? "" : hardline, concat(body)]))
+        group(
+          concat([
+            singleLineBlock ? "" : hardline,
+            isLambda ? "" : line,
+            concat(body),
+            line,
+            singleLineBlock ? "}" : ""
+          ])
+        )
       );
-      const end = singleLineBlock
-        ? dedent(concat([line, "}"]))
-        : dedent(concat([hardline, "end"]));
-      return concat([blockHead, bodyIndented, end]);
+      const end = dedent(concat([hardline, "end"]));
+      return concat([blockHead, bodyIndented, singleLineBlock ? "" : end]);
     }
 
     case "array": {
