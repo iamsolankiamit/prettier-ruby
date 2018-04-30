@@ -1,43 +1,30 @@
 # Prettier Ruby Plugin
 
-Check back soon :)
+<p align="center">
+    :construction: Work in Progress! :construction:
+</p>
 
-### This is very experimental
+## WORK IN PROGRESS
 
-## what it currently does
+Please note that this plugin is under active development, and might not be ready to run on production code yet.
 
-* [x] handle arguments
-* [x] handle mixed arguments
-* [x] handle optional arguments
-* [x] handle rest arguments
-* [x] handle class
-* [x] handle method defs
-* [x] handle method calls
-* [x] handle Modules
-* [x] handle If conditions
-* [x] handle elsif conditions
-* [x] handle else conditions
-* [x] handle until conditions
-* [x] handle while conditions
-* [x] handle hashes
-* [ ] handle "and" conditions
-* [ ] handle "or" conditions
+## Contributing
 
-## Priority TODo
+If you're interested in contributing to the development of Prettier for Ruby, you can follow the [CONTRIBUTING guide from Prettier](https://github.com/prettier/prettier/blob/master/CONTRIBUTING.md), as it all applies to this repository too.
 
-* [ ] Remove dependency on Unparser gem
+To test it out on a Ruby file:
 
-#### there is lot more todo, feel free to submit PRs for more test cases.
-
----
-
-<!--
+* Clone this repository.
+* Run `yarn`.
+* Create a file called `test.rb`.
+* Run `yarn prettier test.rb` to check the output.
+  <!--
 
 ## Install
 
-```bash
+````bash
 yarn add --dev --exact prettier @prettier/plugin-ruby
-```
+``` -->
 
 ## Configure
 
@@ -47,12 +34,10 @@ yarn add --dev --exact prettier @prettier/plugin-ruby
 {
   "plugins": ["@prettier/plugin-ruby"]
 }
-```
+````
 
 ## Use
 
 ```bash
 prettier --write "**/*.rb"
 ```
-
--->
