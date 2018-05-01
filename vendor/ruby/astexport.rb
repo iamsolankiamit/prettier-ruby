@@ -509,6 +509,16 @@ class Processor < AST::Processor
       source: Unparser.unparse(node)
     }
   end
+
+  def on_module(node)
+    {
+      line: node.loc.line,
+      ast_type: node.type,
+      name: process(node.children[0]),
+      body: node.children[1..-1].map { |c| process(c) },
+      source: Unparser.unparse(node)
+    }
+  end
 end
 
 class CommentProcessor

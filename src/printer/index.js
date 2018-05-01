@@ -82,6 +82,13 @@ function genericPrint(path, options, print) {
   }
 
   switch (n.ast_type) {
+    case "module": {
+      const parts = [];
+      parts.push(group(concat(["module", line, path.call(print, "name")])));
+      parts.push(indent(concat([hardline, concat(path.map(print, "body"))])));
+      parts.push(group(concat([hardline, "end"])));
+      return concat(parts);
+    }
     case "class": {
       const name = path.call(print, "name");
       const _extends = path.call(print, "extends");
@@ -129,7 +136,7 @@ function genericPrint(path, options, print) {
       // default to adding brackets
       let finalBody = group(concat(["(", body, ")"]));
       // name is the item which is being sent
-      const name = n.name;
+      let name = n.name;
       // if the item is a ruby method, then avoid the brackets
       if (keywords.hasOwnProperty(n.name)) {
         finalBody = group(concat([line, body]));
@@ -138,11 +145,12 @@ function genericPrint(path, options, print) {
       if (!body.parts.length) {
         finalBody = "";
       }
-      const parts = [];
+      let parts = [];
       // items are sent "to" something.
       if (n.to) {
         // if it is a chain of send (sent via the dot operator)
         let dotConnected = false;
+        let hasEqual = false;
         if (n.to.ast_type === "send" && !n.body.length) {
           dotConnected = true;
         }
@@ -160,6 +168,10 @@ function genericPrint(path, options, print) {
           } else {
             parts.push(line);
           }
+          if (name.lastIndexOf("=") === name.length - 1) {
+            hasEqual = true;
+            name = name.substring(0, name.length - 1) + " = ";
+          }
           parts.push(name);
         }
         // we don't add space if it is dot connected
@@ -168,14 +180,24 @@ function genericPrint(path, options, print) {
         }
         if (n.name === "[]") {
           parts.push("[");
-        } else if (dotConnected && n.body.length) {
+        } else if (dotConnected && n.body.length && !hasEqual) {
           parts.push("(");
         }
-        parts.push(join(concat([",", line]), path.map(print, "body")));
+        parts = [concat(parts)];
+        parts.push(
+          group(
+            indent(
+              concat([
+                softline,
+                join(concat([",", line]), path.map(print, "body"))
+              ])
+            )
+          )
+        );
         if (n.name === "[]") {
           parts.push("]");
-        } else if (dotConnected && n.body.length) {
-          parts.push(")");
+        } else if (dotConnected && n.body.length && !hasEqual) {
+          parts.push(concat([softline, ")"]));
         }
       } else {
         parts.push(name, finalBody);
