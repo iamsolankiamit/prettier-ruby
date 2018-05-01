@@ -1,5 +1,6 @@
 "use strict";
 
 module.exports = {
-  puts: "puts"
+  puts: "puts",
+  require: "require"
 };

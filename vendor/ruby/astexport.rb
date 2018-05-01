@@ -20,233 +20,292 @@ class Processor < AST::Processor
   end
 
   def on_begin(node)
-    { ast_type: node.type,
+    {
+      ast_type: node.type,
       line: node.children[0].loc.line,
-      body: node.children.map { |c|  process(c) },
-      source: Unparser.unparse(node) }
+      body: node.children.map { |c| process(c) },
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_int(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       body: node.children[0],
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_true(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       body: node.children[0],
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_false(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       body: node.children[0],
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_array(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       body: node.children.map { |c| process(c) },
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_hash(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       body: node.children.map { |c| process(c) },
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_pair(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       symbol: process(node.children[0]),
       value: process(node.children[1]),
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_block(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       of: process(node.children[0]),
       args: process(node.children[1]),
       body: node.children[2..-1].map { |c| process(c) },
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_sym(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       body: node.children[0],
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_arg(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       arg: node.children[0],
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_argument(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       body: node.children[0],
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_back_ref(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       body: node.children[0],
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_blockarg(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       body: node.children[0],
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_casgn(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       body: node.children[0],
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_const(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       of: process(node.children[0]),
       constant: node.children[1],
       body: node.children[2..-1].map { |c| process(c) },
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_cvar(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       body: node.children[0],
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_cvasgn(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       body: node.children[0],
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_def(node)
     childrens = node.children[1..-1].map { |c| process(c) }
     args = childrens.select { |c| c[:ast_type] == :args }
     body = childrens.reject { |c| c[:ast_type] == :args }
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       name: node.children[0],
       args: args[0],
       body: body,
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_defs(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       body: node.children[1],
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_gvar(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       body: node.children[0],
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_gvasgn(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       body: node.children[0],
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_ivar(node)
-    { line: node,
+    {
+      line: node,
       ast_type: node.type,
       body: node.children[0],
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_ivasgn(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       left: node.children[0],
-      right: node.children[1..-1].map{ |c| process(c) },
-      source: Unparser.unparse(node) }
+      right: node.children[1..-1].map { |c| process(c) },
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_kwarg(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       body: node.children[0],
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_kwoptarg(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       body: node.children[0],
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_kwrestarg(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       body: node.children[0],
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_lvar(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       lvar: node.children[0],
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_lvasgn(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       left: node.children[0],
-      right: node.children[1..-1].map{ |c| process(c) },
-      source: Unparser.unparse(node) }
+      right: node.children[1..-1].map { |c| process(c) },
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_case(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       condition: process(node.children[0]),
-      body: node.children[1..-1].map{ |c| process(c)},
+      body: node.children[1..-1].map { |c| process(c) },
       source: Unparser.unparse(node)
     }
   end
 
   def on_when(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       condition: process(node.children[0]),
-      body: node.children[1..-1].map{ |c| process(c)},
+      body: node.children[1..-1].map { |c| process(c) },
       source: Unparser.unparse(node)
     }
   end
 
   def on_irange(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       from: process(node.children[0]),
       to: process(node.children[1]),
@@ -255,118 +314,148 @@ class Processor < AST::Processor
   end
 
   def on_nth_ref(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       body: node.children[0],
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_op_asgn(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       body: node.children[0],
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_optarg(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       arg: node.children[0],
       value: node.children[1..-1].map { |c| process(c) },
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_procarg0(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       body: node.children[0],
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_restarg(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       body: node.children[0],
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_send(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       to: process(node.children[0]),
       name: node.children[1],
       body: node.children[2..-1].map { |c| process(c) },
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_self(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       body: node.children[0],
-      source: Unparser.unparse(node)}
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_shadowarg(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       body: node.children[0],
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_var(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       body: node.children[0],
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_vasgn(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       body: node.children[0],
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_class(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       name: process(node.children[0]),
       extends: process(node.children[1]),
       body: node.children[2..-1].map { |c| process(c) },
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_str(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       body: node.children[0],
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_if(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       condition: process(node.children[0]),
       body: process(node.children[1]),
       else_part: process(node.children[2]),
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_until(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       condition: process(node.children[0]),
       body: process(node.children[1]),
       else_part: process(node.children[2]),
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_while(node)
-    { line: node.loc.line,
+    {
+      line: node.loc.line,
       ast_type: node.type,
       condition: process(node.children[0]),
       body: node.children[1..-1].map { |c| process(c) },
-      source: Unparser.unparse(node) }
+      source: Unparser.unparse(node)
+    }
   end
 
   def on_return(node)
@@ -382,22 +471,23 @@ class Processor < AST::Processor
     {
       line: node.loc.line,
       ast_type: node.type,
-      body: "nil",
+      body: 'nil',
       source: Unparser.unparse(node)
     }
   end
-  
+
   def on_args(node)
     if node.children.length > 0
-      return { line: node.loc.line,
+      return {
+        line: node.loc.line,
         ast_type: node.type,
         body: node.children.map { |c| process(c) },
-        source: Unparser.unparse(node) }
-    else 
-      return { line: nil,
-        ast_type: "args",
-        body: [],
-        source: Unparser.unparse(node) }
+        source: Unparser.unparse(node)
+      }
+    else
+      return {
+        line: nil, ast_type: 'args', body: [], source: Unparser.unparse(node)
+      }
     end
   end
 
