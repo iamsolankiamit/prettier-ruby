@@ -168,14 +168,17 @@ function genericPrint(path, options, print) {
           } else {
             parts.push(line);
           }
-          if (name.lastIndexOf("=") === name.length - 1) {
+          if (
+            !tokens.includes(name) &&
+            name.lastIndexOf("=") === name.length - 1
+          ) {
             hasEqual = true;
             name = name.substring(0, name.length - 1) + " = ";
           }
           parts.push(name);
         }
         // we don't add space if it is dot connected
-        if (n.name !== "[]" && !dotConnected) {
+        if (n.name !== "[]" && !dotConnected && !hasEqual) {
           parts.push(line);
         }
         if (n.name === "[]") {
@@ -184,6 +187,12 @@ function genericPrint(path, options, print) {
           parts.push("(");
         }
         parts = [concat(parts)];
+        for (let i = 0; i < n.body.length; i++) {
+          const element = n.body[i];
+          if (element.ast_type === "hash") {
+            n.body[i].noBraces = true;
+          }
+        }
         parts.push(
           group(
             indent(
@@ -267,7 +276,7 @@ function genericPrint(path, options, print) {
         leftParts.push(line, "=", line);
       }
       const left = group(concat(leftParts));
-      const right = join(concat([line]), path.map(print, "right"));
+      const right = join(line, path.map(print, "right"));
       return concat([left, group(right)]);
     }
 
@@ -360,7 +369,7 @@ function genericPrint(path, options, print) {
     case "block": {
       let singleLineBlock = false;
       let isLambda = false;
-      if (n.body.length === 1) {
+      if (n.body.length > 0 && n.body[0].ast_type !== "begin") {
         singleLineBlock = true;
         if (n.of.name === "lambda") {
           isLambda = true;
@@ -393,16 +402,15 @@ function genericPrint(path, options, print) {
       const bodyIndented = indent(
         group(
           concat([
-            singleLineBlock ? "" : hardline,
             isLambda ? "" : line,
             concat(body),
-            line,
-            singleLineBlock ? "}" : ""
+            singleLineBlock
+              ? concat([line, "}"])
+              : dedent(concat([hardline, "end"]))
           ])
         )
       );
-      const end = dedent(concat([hardline, "end"]));
-      return concat([blockHead, bodyIndented, singleLineBlock ? "" : end]);
+      return concat([blockHead, bodyIndented]);
     }
 
     case "array": {
@@ -416,27 +424,36 @@ function genericPrint(path, options, print) {
     }
 
     case "hash": {
-      let body = path.map(print, "body");
+      const body = path.map(print, "body");
+      const noBraces = n.noBraces;
+      let bodyParts = [];
       if (body.length > 0) {
-        body = concat([
-          indent(
-            group(concat([line, group(join(concat([", ", softline]), body))]))
-          ),
-          line
-        ]);
-      } else {
-        body = "";
+        if (!noBraces) {
+          bodyParts.push(line);
+        }
+        bodyParts.push(group(join(concat([", ", softline]), body)));
+        bodyParts = [indent(group(concat(bodyParts)))];
+        if (!noBraces) {
+          bodyParts.push(line);
+        }
       }
-
-      return group(concat(["{", body, "}"]));
+      bodyParts = concat(bodyParts);
+      const parts = [];
+      if (!noBraces) {
+        parts.push("{");
+      }
+      parts.push(bodyParts);
+      if (!noBraces) {
+        parts.push("}");
+      }
+      return group(concat(parts));
     }
 
     case "pair": {
       return group(
         concat([
-          group(concat([n.symbol.body, ":"])),
-          line,
-          path.call(print, "value")
+          group(concat([n.symbol.body, ":", line])),
+          group(concat([path.call(print, "value")]))
         ])
       );
     }
@@ -454,6 +471,7 @@ function genericPrint(path, options, print) {
       parts.push(n.constant);
       return group(concat(parts));
     }
+
     case "case": {
       const _case = [];
       _case.push("case", line, group(path.call(print, "condition")));
