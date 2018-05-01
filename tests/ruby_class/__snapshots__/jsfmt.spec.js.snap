@@ -13,3 +13,17 @@ class TestClass
 end
 
 `;
+
+exports[`class_2.rb 1`] = `
+class Processor < AST::Processor
+  def initialize(a)
+    puts a
+  end
+end~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class Processor < AST::Processor
+  def initialize(a)
+    puts a
+  end
+end
+
+`;

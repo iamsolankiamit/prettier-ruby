@@ -83,11 +83,20 @@ function genericPrint(path, options, print) {
 
   switch (n.ast_type) {
     case "class": {
-      return concat([
-        group(concat(["class", line, path.call(print, "name")])),
-        indent(join(concat([hardline]), path.map(print, "body"))),
+      const name = path.call(print, "name");
+      const _extends = path.call(print, "extends");
+      let parts = [];
+      parts.push("class", line, name);
+      if (_extends) {
+        parts.push(line, "<", line, _extends);
+      }
+      parts = [group(concat(parts))];
+      const body = path.map(print, "body");
+      parts.push(
+        indent(concat([hardline, concat(body)])),
         group(concat([hardline, "end"]))
-      ]);
+      );
+      return concat(parts);
     }
 
     case "begin": {
@@ -162,7 +171,7 @@ function genericPrint(path, options, print) {
         } else if (dotConnected && n.body.length) {
           parts.push("(");
         }
-        parts.push(concat(path.map(print, "body")));
+        parts.push(join(concat([",", line]), path.map(print, "body")));
         if (n.name === "[]") {
           parts.push("]");
         } else if (dotConnected && n.body.length) {
@@ -229,19 +238,37 @@ function genericPrint(path, options, print) {
 
     case "ivasgn":
     case "lvasgn": {
-      const left = group(concat([n.left, " = "]));
+      const hasRight = !!n.right.length;
+      const leftParts = [];
+      leftParts.push(n.left);
+      if (hasRight) {
+        leftParts.push(line, "=", line);
+      }
+      const left = group(concat(leftParts));
       const right = join(concat([line]), path.map(print, "right"));
       return concat([left, group(right)]);
     }
 
     case "return": {
-      return group(concat(["return", line, path.call(print, "value")]));
+      return group(concat(["return ", path.call(print, "value")]));
     }
 
     case "nil": {
       return n.body;
     }
 
+    case "masgn": {
+      const multipleLeftAssign = path.call(print, "mlhs");
+      const body = group(concat(path.map(print, "body")));
+      const parts = [];
+      const left = group(concat([multipleLeftAssign, line, "=", line]));
+      parts.push(left, body);
+      return concat(parts);
+    }
+
+    case "mlhs": {
+      return group(join(concat([",", line]), path.map(print, "body")));
+    }
     case "while": {
       const _while = [];
       _while.push("while", line, group(path.call(print, "condition")));
@@ -397,7 +424,13 @@ function genericPrint(path, options, print) {
     }
 
     case "const": {
-      return concat([path.call(print, "body")]);
+      const ofModule = n.of !== null;
+      const parts = [];
+      if (ofModule) {
+        parts.push(path.call(print, "of"), "::");
+      }
+      parts.push(n.constant);
+      return group(concat(parts));
     }
     case "case": {
       const _case = [];

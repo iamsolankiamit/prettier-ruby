@@ -122,7 +122,10 @@ class Processor < AST::Processor
 
   def on_const(node)
     { line: node.loc.line,
-      ast_type: node.type, body: node.children[1],
+      ast_type: node.type,
+      of: process(node.children[0]),
+      constant: node.children[1],
+      body: node.children[2..-1].map { |c| process(c) },
       source: Unparser.unparse(node) }
   end
 
@@ -327,8 +330,9 @@ class Processor < AST::Processor
   def on_class(node)
     { line: node.loc.line,
       ast_type: node.type,
-      name: process(node.children[0])[:body],
-      body: node.children[1..-1].map { |c| process(c) },
+      name: process(node.children[0]),
+      extends: process(node.children[1]),
+      body: node.children[2..-1].map { |c| process(c) },
       source: Unparser.unparse(node) }
   end
 
@@ -398,6 +402,16 @@ class Processor < AST::Processor
   end
 
   def on_masgn(node)
+    {
+      line: node.loc.line,
+      ast_type: node.type,
+      mlhs: process(node.children[0]),
+      body: node.children[1..-1].map { |c| process(c) },
+      source: Unparser.unparse(node)
+    }
+  end
+
+  def on_mlhs(node)
     {
       line: node.loc.line,
       ast_type: node.type,
