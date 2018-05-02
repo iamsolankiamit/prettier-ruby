@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`defs.rb 1`] = `
+def self.root_level=(level)
+  @root_level = level
+end
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def self.root_level=(level)
+  @root_level = level
+end
+
+`;

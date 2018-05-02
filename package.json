@@ -6,12 +6,15 @@
   "repository": "https://github.com/prettier/prettier-ruby",
   "author": "Amit Solanki <@iamsolankiamit>",
   "license": "MIT",
-  "files": ["src", "vendor"],
+  "files": [
+    "src",
+    "vendor"
+  ],
   "engines": {
     "node": ">=6"
   },
   "dependencies": {
-    "prettier": "prettier/prettier#f224087cef285da0267acf2391b10875773d153b"
+    "prettier": "prettier/prettier#d05a29da05b2084790491eaef85917ce584e4fbd"
   },
   "devDependencies": {
     "eslint": "^4.14.0",
@@ -28,6 +31,8 @@
     "prettier": "prettier --plugin=. --parser=ruby"
   },
   "jest": {
-    "projects": ["<rootDir>/jest.*.config.js"]
+    "projects": [
+      "<rootDir>/jest.*.config.js"
+    ]
   }
 }

@@ -217,11 +217,15 @@ function genericPrint(path, options, print) {
     case "File": {
       return concat([printBody(path, print), hardline]);
     }
-
+    case "defs":
     case "def": {
       const def = [];
-
-      def.push("def", line, path.call(print, "name"));
+      const isSelf = n.ast_type === "defs";
+      let name = path.call(print, "name");
+      if (isSelf) {
+        name = concat(["self.", name]);
+      }
+      def.push("def", line, name);
 
       const parts = [];
 
@@ -516,6 +520,23 @@ function genericPrint(path, options, print) {
       return concat(range);
     }
 
+    case "yield": {
+      const parts = [];
+      parts.push("yield");
+      parts.push("(");
+      parts.push(concat(path.map(print, "body")));
+      parts.push(")");
+      return concat(parts);
+    }
+
+    case "kwoptarg": {
+      const parts = [];
+      parts.push(n.name);
+      parts.push(":");
+      parts.push(line);
+      parts.push(concat(path.map(print, "arg")));
+      return concat(parts);
+    }
     default:
       // eslint-disable-next-line no-console
       console.error("Unknown Ruby Node:", n);

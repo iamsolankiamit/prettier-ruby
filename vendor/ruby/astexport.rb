@@ -192,10 +192,15 @@ class Processor < AST::Processor
   end
 
   def on_defs(node)
+    childrens = node.children[2..-1].map { |c| process(c) }
+    args = childrens.select { |c| c[:ast_type] == :args }
+    body = childrens.reject { |c| c[:ast_type] == :args }
     {
       line: node.loc.line,
       ast_type: node.type,
-      body: node.children[1],
+      name: node.children[1],
+      args: args[0],
+      body: body,
       source: Unparser.unparse(node)
     }
   end
@@ -250,7 +255,8 @@ class Processor < AST::Processor
     {
       line: node.loc.line,
       ast_type: node.type,
-      body: node.children[0],
+      name: node.children[0],
+      arg: node.children[1..-1].map { |c| process(c) },
       source: Unparser.unparse(node)
     }
   end
@@ -516,6 +522,15 @@ class Processor < AST::Processor
       ast_type: node.type,
       name: process(node.children[0]),
       body: node.children[1..-1].map { |c| process(c) },
+      source: Unparser.unparse(node)
+    }
+  end
+
+  def on_yield(node)
+    {
+      line: node.loc.line,
+      ast_type: node.type,
+      body: node.children.map { |c| process(c) },
       source: Unparser.unparse(node)
     }
   end
