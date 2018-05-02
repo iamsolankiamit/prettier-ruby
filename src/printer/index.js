@@ -13,6 +13,7 @@ const softline = docBuilders.softline;
 const group = docBuilders.group;
 const indent = docBuilders.indent;
 const dedent = docBuilders.dedent;
+const ifBreak = docBuilders.ifBreak;
 
 function printRubyString(raw, options) {
   // `rawContent` is the string exactly like it appeared in the input source
@@ -89,13 +90,23 @@ function genericPrint(path, options, print) {
       parts.push(group(concat([hardline, "end"])));
       return concat(parts);
     }
+    case "sclass":
     case "class": {
       const name = path.call(print, "name");
       const _extends = path.call(print, "extends");
+      const selfClass = n.ast_type === "sclass";
       let parts = [];
-      parts.push("class", line, name);
+      parts.push("class ");
+      if (selfClass) {
+        parts.push("<< ");
+      }
+      parts.push(name);
       if (_extends) {
-        parts.push(line, "<", line, _extends);
+        if (!selfClass) {
+          parts.push(" < ", _extends);
+        } else {
+          parts.push(indent(concat([hardline, _extends])));
+        }
       }
       parts = [group(concat(parts))];
       const body = path.map(print, "body");
@@ -124,6 +135,10 @@ function genericPrint(path, options, print) {
 
     case "false": {
       return "false";
+    }
+
+    case "break": {
+      return "break";
     }
 
     case "restarg": {
@@ -158,30 +173,45 @@ function genericPrint(path, options, print) {
         //   dotConnected = true;
         // }
         // Usually the last item (Class name, Module name, etc)
-        if (n.to.ast_type !== "send") {
+        if (n.to.ast_type !== "send" && !tokens.includes(name)) {
           dotConnected = true;
         }
+        let withoutName = false;
+        let arrayEqual = false;
+        if (name === "-@") {
+          withoutName = true;
+          parts.push("-");
+        }
         parts.push(path.call(print, "to"));
-        if (n.name !== "[]") {
-          if (dotConnected) {
-            parts.push(".");
-          } else {
-            parts.push(line);
+        let arraySend = false;
+        if (n.name === "[]" || n.name === "[]=") {
+          if (n.name === "[]=") {
+            arrayEqual = true;
           }
+          arraySend = true;
+        }
+        if (!arraySend && !withoutName) {
           if (
             !tokens.includes(name) &&
             name.lastIndexOf("=") === name.length - 1
           ) {
             hasEqual = true;
+            dotConnected = true;
             name = name.substring(0, name.length - 1) + " = ";
           }
+          if (dotConnected) {
+            parts.push(".");
+          } else {
+            parts.push(line);
+          }
+
           parts.push(name);
         }
         // we don't add space if it is dot connected
-        if (n.name !== "[]" && !dotConnected && !hasEqual) {
+        if (!arraySend && !dotConnected && !hasEqual) {
           parts.push(line);
         }
-        if (n.name === "[]") {
+        if (arraySend) {
           parts.push("[");
         } else if (dotConnected && n.body.length && !hasEqual) {
           parts.push("(");
@@ -191,6 +221,15 @@ function genericPrint(path, options, print) {
           const element = n.body[i];
           if (element.ast_type === "hash") {
             n.body[i].noBraces = true;
+          }
+          if (arraySend && element.ast_type === "send") {
+            if (n.subParts) {
+              n.subParts.push(n.body[i]);
+            } else {
+              n.subParts = [n.body[i]];
+            }
+            n.body.splice(i, 1);
+            i -= 1;
           }
         }
         parts.push(
@@ -203,15 +242,38 @@ function genericPrint(path, options, print) {
             )
           )
         );
-        if (n.name === "[]") {
+        if (arraySend) {
           parts.push("]");
         } else if (dotConnected && n.body.length && !hasEqual) {
           parts.push(concat([softline, ")"]));
+        }
+        if (arrayEqual) {
+          parts.push(" = ", concat(path.map(print, "subParts")));
         }
       } else {
         parts.push(name, finalBody);
       }
       return group(concat(parts));
+    }
+
+    case "and": {
+      return concat([
+        path.call(print, "left"),
+        line,
+        "&&",
+        line,
+        path.call(print, "right")
+      ]);
+    }
+
+    case "or": {
+      return concat([
+        path.call(print, "left"),
+        line,
+        "||",
+        line,
+        path.call(print, "right")
+      ]);
     }
 
     case "File": {
@@ -270,14 +332,20 @@ function genericPrint(path, options, print) {
     case "lvar": {
       return n.lvar;
     }
-
+    case "casgn":
+    case "or_asgn":
     case "ivasgn":
     case "lvasgn": {
       const hasRight = !!n.right.length;
       const leftParts = [];
-      leftParts.push(n.left);
+      leftParts.push(path.call(print, "left"));
+      const orAssign = n.ast_type === "or_asgn";
       if (hasRight) {
-        leftParts.push(line, "=", line);
+        leftParts.push(line);
+        if (orAssign) {
+          leftParts.push("||");
+        }
+        leftParts.push("=", line);
       }
       const left = group(concat(leftParts));
       const right = join(line, path.map(print, "right"));
@@ -285,7 +353,8 @@ function genericPrint(path, options, print) {
     }
 
     case "return": {
-      return group(concat(["return ", path.call(print, "value")]));
+      const value = path.call(print, "value");
+      return group(concat(["return", value ? " " : "", value]));
     }
 
     case "nil": {
@@ -346,28 +415,48 @@ function genericPrint(path, options, print) {
 
     case "if": {
       const _if = [];
-      _if.push("if", line, group(path.call(print, "condition")));
 
-      const body = [];
-      const isElse = n.else_part;
+      const bodyParts = [];
+
+      let isElse = n.else_part;
       const isElseIf = isElse && n.else_part.ast_type === "if";
-      body.push(
-        group(concat(_if)),
-        indent(concat([hardline, path.call(print, "body")])),
-        hardline
-      );
+      let singleLineBlock = false;
+      if (n.body && n.body.ast_type !== "begin" && !isElse) {
+        singleLineBlock = true;
+      }
+      const body = path.call(print, "body");
+      // if the body is blank and it has else part, then print "unless" elsePart
+      if (body === "" && isElse) {
+        isElse = false;
+        singleLineBlock = true;
+        _if.push("unless", line, group(path.call(print, "condition")));
+        bodyParts.push(
+          group(concat([path.call(print, "else_part"), " ", concat(_if)]))
+        );
+      } else {
+        _if.push("if", line, group(path.call(print, "condition")));
+        if (singleLineBlock) {
+          bodyParts.push(group(concat([body, " ", concat(_if)])));
+        } else {
+          bodyParts.push(group(concat(_if)));
+          bodyParts.push(indent(concat([hardline, body])));
+          bodyParts.push(hardline);
+        }
+      }
       if (isElse) {
         const elsePart = path.call(print, "else_part");
         if (isElseIf) {
-          body.push("els", dedent(concat([elsePart])));
+          bodyParts.push("els", dedent(concat([elsePart])));
         } else {
-          body.push("else", indent(concat([hardline, elsePart])));
-          body.push(hardline, "end");
+          bodyParts.push("else", indent(concat([hardline, elsePart])));
+          bodyParts.push(hardline, "end");
         }
       } else {
-        body.push("end");
+        if (!singleLineBlock) {
+          bodyParts.push("end");
+        }
       }
-      return concat(body);
+      return concat(bodyParts);
     }
 
     case "block": {
@@ -388,33 +477,46 @@ function genericPrint(path, options, print) {
         argsContent = concat([
           singleLineBlock && isLambda ? "(" : "|",
           args,
-          singleLineBlock && isLambda ? ")" : "|"
+          singleLineBlock && isLambda ? ")" : "| "
         ]);
       }
       body = path.map(print, "body");
-      const blockHead = group(
-        concat([
-          _of,
-          singleLineBlock && isLambda ? argsContent : "",
-          line,
-          singleLineBlock ? "{" : "do",
-          line,
-          singleLineBlock && isLambda ? "" : argsContent
-        ])
-      );
-
-      const bodyIndented = indent(
-        group(
-          concat([
-            isLambda ? "" : line,
-            concat(body),
-            singleLineBlock
-              ? concat([line, "}"])
-              : dedent(concat([hardline, "end"]))
-          ])
+      let blockHead = [];
+      blockHead.push(_of);
+      const args = [];
+      if (singleLineBlock) {
+        if (isLambda) {
+          args.push(argsContent);
+        }
+        args.push(ifBreak(" do ", " { "));
+        if (!isLambda) {
+          args.push(argsContent);
+        }
+      } else {
+        args.push(" do ");
+        if (!isLambda) {
+          args.push(argsContent);
+        }
+      }
+      blockHead.push(concat(args));
+      blockHead = [ifBreak(concat(blockHead), group(concat(blockHead)))];
+      blockHead.push(
+        indent(
+          group(
+            concat([
+              softline,
+              concat(body),
+              dedent(
+                singleLineBlock
+                  ? ifBreak(concat([line, "end"]), " }")
+                  : concat([hardline, "end"])
+              )
+            ])
+          )
         )
       );
-      return concat([blockHead, bodyIndented]);
+
+      return group(concat(blockHead));
     }
 
     case "array": {

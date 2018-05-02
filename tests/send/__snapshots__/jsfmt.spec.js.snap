@@ -58,6 +58,34 @@ end
 exports[`send_3.rb 1`] = `
 source_buffer.source = File.read(@filename, encoding: Encoding::UTF_8)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-source_buffer source = File.read(@filename, encoding: Encoding::UTF_8)
+source_buffer.source = File.read(@filename, encoding: Encoding::UTF_8)
+
+`;
+
+exports[`send_4.rb 1`] = `
+foo + 1
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+foo + 1
+
+`;
+
+exports[`send_5.rb 1`] = `
+-foo
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-foo
+
+`;
+
+exports[`send_6.rb 1`] = `
+bar[1, 2] = baz
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+bar[1, 2] = baz
+
+`;
+
+exports[`send_7.rb 1`] = `
+foo.a = 1
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+foo.a = 1
 
 `;

@@ -1,5 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`block_1.rb 1`] = `
+very_long_function_name_here(long_arg_name, another_arg, file) do |file|
+  files = file
+end
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+very_long_function_name_here(long_arg_name, another_arg, file) do |file|
+  files = file
+end
+
+`;
+
 exports[`block.rb 1`] = `
 example.map! do |o|
   location = Module::Submodule::Class.new(varia,

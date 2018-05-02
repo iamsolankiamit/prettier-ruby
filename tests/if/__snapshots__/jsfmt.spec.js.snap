@@ -28,8 +28,6 @@ if true
   puts "this is true"
 end
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-if true
-  puts 'this is true'
-end
+puts 'this is true' if true
 
 `;

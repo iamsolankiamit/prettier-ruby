@@ -143,7 +143,8 @@ class Processor < AST::Processor
     {
       line: node.loc.line,
       ast_type: node.type,
-      body: node.children[0],
+      left: node.children[1],
+      right: node.children[2..-1].map { |c| process(c) },
       source: Unparser.unparse(node)
     }
   end
@@ -173,6 +174,52 @@ class Processor < AST::Processor
       line: node.loc.line,
       ast_type: node.type,
       body: node.children[0],
+      source: Unparser.unparse(node)
+    }
+  end
+
+  def on_regexp(node)
+    {
+      line: node.loc.line,
+      ast_type: node.type,
+      body: node.children.map { |c| process(c) },
+      source: Unparser.unparse(node)
+    }
+  end
+
+  def on_dstr(node)
+    {
+      line: node.loc.line,
+      ast_type: node.type,
+      body: node.children.map { |c| process(c) },
+      source: Unparser.unparse(node)
+    }
+  end
+
+  def on_or_asgn(node)
+    {
+      line: node.loc.line,
+      ast_type: node.type,
+      left: process(node.children[0]),
+      right: node.children[1..-1].map { |c| process(c) },
+      source: Unparser.unparse(node)
+    }
+  end
+
+  def on_kwbegin(node)
+    {
+      line: node.loc.line,
+      ast_type: node.type,
+      body: node.children.map { |c| process(c) },
+      source: Unparser.unparse(node)
+    }
+  end
+
+  def on_rescue(node)
+    {
+      line: node.loc.line,
+      ast_type: node.type,
+      body: node.children.map { |c| process(c) },
       source: Unparser.unparse(node)
     }
   end
@@ -242,6 +289,34 @@ class Processor < AST::Processor
     }
   end
 
+  def on_or(node)
+    {
+      line: node.loc.line,
+      ast_type: node.type,
+      left: process(node.children[0]),
+      right: process(node.children[1]),
+      source: Unparser.unparse(node)
+    }
+  end
+
+  def on_and(node)
+    {
+      line: node.loc.line,
+      ast_type: node.type,
+      left: process(node.children[0]),
+      right: process(node.children[1]),
+      source: Unparser.unparse(node)
+    }
+  end
+
+  def on_break(node)
+    {
+      line: node.loc.line,
+      ast_type: node.type,
+      body: "break",
+      source: Unparser.unparse(node)
+    }
+  end
   def on_kwarg(node)
     {
       line: node.loc.line,
@@ -413,6 +488,17 @@ class Processor < AST::Processor
   end
 
   def on_class(node)
+    {
+      line: node.loc.line,
+      ast_type: node.type,
+      name: process(node.children[0]),
+      extends: process(node.children[1]),
+      body: node.children[2..-1].map { |c| process(c) },
+      source: Unparser.unparse(node)
+    }
+  end
+
+  def on_sclass(node)
     {
       line: node.loc.line,
       ast_type: node.type,
