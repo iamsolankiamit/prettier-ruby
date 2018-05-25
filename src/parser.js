@@ -5,7 +5,6 @@ const path = require("path");
 
 function parseText(text) {
   const executionResult = spawnSync("ruby", [
-    "-W0",
     path.join(__dirname, "../vendor/ruby/astexport.rb"),
     text
   ]);
@@ -19,7 +18,6 @@ function parseText(text) {
 
 function parse(text) {
   const executionResult = parseText(text);
-
   const res = executionResult.stdout.toString();
   const ast = JSON.parse(res);
   return ast;

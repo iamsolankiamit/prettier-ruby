@@ -16,8 +16,6 @@ end
 exports[`until_2.rb 1`] = `
 do_something until some_condition
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-until some_condition
-  do_something
-end
+do_something until some_condition
 
 `;

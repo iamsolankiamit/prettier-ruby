@@ -16,8 +16,6 @@ end
 exports[`while_2.rb 1`] = `
 do_something while some_condition
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-while some_condition
-  do_something
-end
+do_something while some_condition
 
 `;
