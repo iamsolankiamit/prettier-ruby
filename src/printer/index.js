@@ -113,6 +113,18 @@ function genericPrint(path, options, print) {
   }
 
   switch (n.ast_type) {
+    case "module": {
+      const name = path.call(print, "name");
+      let parts = [];
+      parts.push("module ");
+      parts.push(name);
+      parts = [group(concat(parts))];
+
+      const body = path.call(print, "body");
+      parts.push(indent(concat([hardline, body])), hardline, "end");
+      return concat(parts);
+    }
+
     case "class": {
       const name = path.call(print, "name");
       const superClass = path.call(print, "superclass");
@@ -124,10 +136,7 @@ function genericPrint(path, options, print) {
       }
       parts = [group(concat(parts))];
       const body = path.call(print, "body");
-      parts.push(
-        indent(concat([hardline, body])),
-        dedent(concat([hardline, "end"]))
-      );
+      parts.push(indent(concat([hardline, body])), hardline, "end");
       return concat(parts);
     }
 
@@ -332,6 +341,10 @@ function genericPrint(path, options, print) {
 
     case "bare_assoc_hash": {
       return join(concat([",", line]), path.map(print, "hashes"));
+    }
+
+    case "top_const_ref": {
+      return concat(["::", path.call(print, "value")]);
     }
 
     case "const_path_ref": {
