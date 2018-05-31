@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`__END__.rb 1`] = `
+foo
+__END__
+test_content
+  goes
+  here
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+foo
+__END__
+test_content
+  goes
+  here
+
+`;

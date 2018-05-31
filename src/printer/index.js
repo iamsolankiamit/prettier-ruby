@@ -13,7 +13,7 @@ const softline = docBuilders.softline;
 const group = docBuilders.group;
 const indent = docBuilders.indent;
 const dedent = docBuilders.dedent;
-// const ifBreak = docBuilders.ifBreak;
+const ifBreak = docBuilders.ifBreak;
 
 function printRubyString(raw, options) {
   // `rawContent` is the string exactly like it appeared in the input source
@@ -60,7 +60,7 @@ function printRubyString(raw, options) {
 }
 
 function printBody(path, print) {
-  return join(concat([hardline]), path.map(print, "body"));
+  return join(hardline, path.map(print, "body"));
 }
 
 function printConditionalBlock(node, path, print, conditional, isSingleLine) {
@@ -143,6 +143,7 @@ function genericPrint(path, options, print) {
       return path.call(print, "ref");
     }
 
+    case "@imaginary":
     case "@int": {
       return n.value.toString();
     }
@@ -151,8 +152,75 @@ function genericPrint(path, options, print) {
       return path.call(print, "body");
     }
 
-    case "@const": {
+    case "@const":
+    case "@gvar":
+    case "@op": {
       return path.call(print, "value");
+    }
+
+    case "__END__": {
+      if (n.content) {
+        // In case of __END__ if the last char is a new Line,
+        // we remove it, since we add an extra line after the end
+        // of program anyways.
+        const lastLine = n.content[n.content.length - 1];
+        const indexOfNewline = lastLine.indexOf("\n");
+        if (indexOfNewline !== -1) {
+          n.content[n.content.length - 1] = lastLine.slice(0, indexOfNewline);
+        }
+      }
+      return concat(["__END__", hardline, concat(path.map(print, "content"))]);
+    }
+
+    case "next": {
+      const parts = [];
+      parts.push("next");
+      if (n.args) {
+        parts.push(" ", path.call(print, "args"));
+      }
+      return concat(parts);
+    }
+
+    case "undef": {
+      const parts = [];
+      parts.push("undef");
+      if (n.exps) {
+        parts.push(" ", join(", ", path.map(print, "exps")));
+      }
+      return concat(parts);
+    }
+
+    case "break": {
+      const parts = [];
+      parts.push("break");
+      if (n.exp) {
+        parts.push(" ", path.call(print, "exp"));
+      }
+      return concat(parts);
+    }
+
+    case "zsuper": {
+      return "super";
+    }
+
+    case "super": {
+      return concat(["super ", path.call(print, "args")]);
+    }
+
+    case "defined": {
+      const parts = [];
+      const hasParen = n.exp.ast_type === "paren";
+      parts.push("defined?");
+      if (hasParen) {
+        parts.push("((");
+      } else {
+        parts.push(" ");
+      }
+      parts.push(path.call(print, "exp"));
+      if (hasParen) {
+        parts.push("))");
+      }
+      return concat(parts);
     }
 
     case "dot3":
@@ -349,6 +417,44 @@ function genericPrint(path, options, print) {
       return group(concat(parts));
     }
 
+    case "END":
+    case "BEGIN": {
+      const parts = [
+        n.ast_type,
+        " {",
+        indent(
+          concat([
+            line,
+            join(
+              ifBreak(softline, concat([";", line])),
+              path.map(print, "bodystmt")
+            )
+          ])
+        ),
+        line,
+        "}"
+      ];
+      return concat(parts);
+    }
+
+    case "alias":
+    case "var_alias": {
+      return concat([
+        "alias",
+        " ",
+        path.call(print, "from"),
+        " ",
+        path.call(print, "to")
+      ]);
+    }
+
+    case "mrhs_new_from_args": {
+      return join(concat([",", line]), [
+        join(concat([",", line]), path.map(print, "exps")),
+        path.call(print, "final_exp")
+      ]);
+    }
+
     case "const_ref": {
       return path.call(print, "value");
     }
@@ -424,7 +530,7 @@ function genericPrint(path, options, print) {
       const parts = [];
       const hasExp = !!n.exps;
       if (hasExp) {
-        parts.push(path.call(print, "exps"));
+        parts.push(concat(path.map(print, "exps")));
       }
       return group(concat(parts));
     }
