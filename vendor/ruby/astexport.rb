@@ -124,7 +124,9 @@ class Processor
     when :aref_field
       visit_array_field(node)
     when :array
-      { ast_type: 'array', body: visit_exps(node[1]) }
+      type, body = node
+
+      { ast_type: type, body: (body.nil? ? nil : visit_exps(body)) }
     when :method_add_block
       { ast_type: 'method_add_block', call: visit(node[1]), block: visit(node[2]) }
     when :method_add_arg
