@@ -587,6 +587,12 @@ function genericPrint(path, options, print) {
     }
 
     case "method_add_arg": {
+      if (n.args.args == null) {
+        return concat([
+          path.call(print, "name")
+        ]);
+      }
+
       return concat([
         path.call(print, "name"),
         "(",

@@ -141,7 +141,9 @@ class Processor
     when :var_ref
       { ast_type: 'var_ref', ref: visit(node[1]) }
     when :arg_paren
-      { ast_type: 'arg_paren', args: visit(node[1]) }
+      type, args = node
+
+      { ast_type: type, args: (args.nil? ? nil : visit(args)) }
     when :args_add_block
       { ast_type: 'args_add_block', args_body: visit_exps(node[1]) }
     when :vcall
