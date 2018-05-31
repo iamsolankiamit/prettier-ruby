@@ -30,6 +30,10 @@ class Processor
     when :program
       body = visit_exps(node[1])
       { ast_type: 'program', body: body }
+    when :module
+      # ["module", const_path_ref, bodystmt]
+      type, name, body = node
+      { ast_type: type, name: visit(name), body: visit(body) }
     when :class
       visit_class(node)
     when :assign
@@ -90,6 +94,10 @@ class Processor
       { ast_type: type, value: value }
     when :const_ref
       # [:const_ref, [:@const, "Foo", [1, 8]]]
+      type, value = node
+      { ast_type: type, value: visit(value) }
+    when :top_const_ref
+      # [:top_const_ref, [:@const, ...]]
       type, value = node
       { ast_type: type, value: visit(value) }
     when :void_stmt

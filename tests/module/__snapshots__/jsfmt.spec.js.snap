@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`module_1.rb 1`] = `
+module ::A::B::C
+  module NestedModule::Foo
+    class ClassName
+      def add(x, y)
+        x + y
+      end
+    end
+  end
+end
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+module ::A::B::C
+  module NestedModule::Foo
+    class ClassName
+      def add(x, y)
+        x + y
+      end
+    end
+  end
+end
+
+`;
