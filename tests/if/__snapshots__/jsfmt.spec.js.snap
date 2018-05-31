@@ -31,3 +31,19 @@ end
 puts 'this is true' if true
 
 `;
+
+exports[`if_3.rb 1`] = `
+def foo()
+  true
+end
+
+if foo()
+  puts "this is true"
+end
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def foo
+  true
+end
+puts 'this is true' if foo
+
+`;
