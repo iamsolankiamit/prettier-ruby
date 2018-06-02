@@ -39,7 +39,7 @@ $ ruby vendor/ruby/astexport.rb "puts 'hello world'"
 To run an individual test folder:
 
 ```bash
-DBEUG=true yarn run test tests/defs --watch
+DEBUG=true yarn run test tests/defs --watch
 ```
 
 ## Usage
