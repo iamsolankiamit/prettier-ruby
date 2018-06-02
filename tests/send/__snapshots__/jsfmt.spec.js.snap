@@ -89,3 +89,14 @@ foo.a = 1
 foo.a = 1
 
 `;
+
+exports[`send_safe_navigation.rb 1`] = `
+account&.owner&.address
+account&.owner&.address = "hello"
+account&.owner&.foo("hello")
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+account&.owner&.address
+account&.owner&.address = 'hello'
+account&.owner&.foo('hello')
+
+`;
