@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 "use strict";
 
 const spawnSync = require("child_process").spawnSync;
@@ -19,8 +20,15 @@ function parseText(text) {
 function parse(text) {
   const executionResult = parseText(text);
   const res = executionResult.stdout.toString();
-  const ast = JSON.parse(res);
-  return ast;
+  const { tokens, sexp, json } = JSON.parse(res);
+
+  if (process.env.DEBUG) {
+    console.log("tokens:\n", tokens);
+    console.log("sexp:\n", sexp);
+    console.log("json AST:\n", JSON.stringify(json, null, 4));
+  }
+
+  return json;
 }
 
 module.exports = parse;
