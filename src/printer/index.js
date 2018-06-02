@@ -386,6 +386,16 @@ function genericPrint(path, options, print) {
       return concat(bodyStatementParts);
     }
 
+    case "command_call": {
+      return concat([
+        path.call(print, "receiver"),
+        n.separator,
+        path.call(print, "name"),
+        " ",
+        path.call(print, "args")
+      ]);
+    }
+
     case "command": {
       const body = path.call(print, "args");
       let finalBody = group(concat(["(", body, ")"]));

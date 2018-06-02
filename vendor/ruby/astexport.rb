@@ -194,6 +194,11 @@ class Processor
       visit_while_mod(node)
     when :command
       visit_command(node)
+    when :command_call
+      # Note that the seperator can either be :"." or :"&."
+      type, receiver, separator, name, args = node
+
+      { ast_type: type, receiver: visit(receiver), separator: separator, name: visit(name), args: visit(args) }
     when :assoc_new
       visit_hash_key_value(node)
     when :until

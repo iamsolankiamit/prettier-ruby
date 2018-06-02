@@ -2,10 +2,14 @@
 
 exports[`call_1.rb 1`] = `
 puts 123
+['small', 'medium', 'large'].include? params[:size]
+params&.include? params[:size]
 
 greet('userName')
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 puts 123
+['small', 'medium', 'large'].include? params[:size]
+params&.include? params[:size]
 greet('userName')
 
 `;
