@@ -1,5 +1,5 @@
 # Prettier Ruby Plugin
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors)
 
 <p align="center">
     :construction: Work in Progress! :construction:
@@ -58,8 +58,8 @@ Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore -->
-| [<img src="https://avatars2.githubusercontent.com/u/1271782?v=4" width="100px;"/><br /><sub><b>Alan Foster</b></sub>](http://www.alanfoster.me/)<br />[📖](https://github.com/iamsolankiamit/prettier-ruby/commits?author=AlanFoster "Documentation") [🐛](https://github.com/iamsolankiamit/prettier-ruby/issues?q=author%3AAlanFoster "Bug reports") [💻](https://github.com/iamsolankiamit/prettier-ruby/commits?author=AlanFoster "Code") [🤔](#ideas-AlanFoster "Ideas, Planning, & Feedback") |
-| :---: |
+| [<img src="https://avatars2.githubusercontent.com/u/1271782?v=4" width="100px;"/><br /><sub><b>Alan Foster</b></sub>](http://www.alanfoster.me/)<br />[📖](https://github.com/iamsolankiamit/prettier-ruby/commits?author=AlanFoster "Documentation") [🐛](https://github.com/iamsolankiamit/prettier-ruby/issues?q=author%3AAlanFoster "Bug reports") [💻](https://github.com/iamsolankiamit/prettier-ruby/commits?author=AlanFoster "Code") [🤔](#ideas-AlanFoster "Ideas, Planning, & Feedback") | [<img src="https://avatars3.githubusercontent.com/u/3483526?v=4" width="100px;"/><br /><sub><b>Amit Solanki</b></sub>](http://solankiamit.com)<br />[📖](https://github.com/iamsolankiamit/prettier-ruby/commits?author=iamsolankiamit "Documentation") [🐛](https://github.com/iamsolankiamit/prettier-ruby/issues?q=author%3Aiamsolankiamit "Bug reports") [💻](https://github.com/iamsolankiamit/prettier-ruby/commits?author=iamsolankiamit "Code") [🤔](#ideas-iamsolankiamit "Ideas, Planning, & Feedback") [💡](#example-iamsolankiamit "Examples") [👀](#review-iamsolankiamit "Reviewed Pull Requests") [⚠️](https://github.com/iamsolankiamit/prettier-ruby/commits?author=iamsolankiamit "Tests") |
+| :---: | :---: |
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Contributions of any kind welcome!

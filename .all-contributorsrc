@@ -20,6 +20,21 @@
         "code",
         "ideas"
       ]
+    },
+    {
+      "login": "iamsolankiamit",
+      "name": "Amit Solanki",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/3483526?v=4",
+      "profile": "http://solankiamit.com",
+      "contributions": [
+        "doc",
+        "bug",
+        "code",
+        "ideas",
+        "example",
+        "review",
+        "test"
+      ]
     }
   ]
 }
