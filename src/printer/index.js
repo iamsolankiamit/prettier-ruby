@@ -334,6 +334,10 @@ function genericPrint(path, options, print) {
     }
 
     case "label_param": {
+      if (!n.default) {
+        return group(concat([path.call(print, "label")]));
+      }
+
       return group(
         concat([path.call(print, "label"), " ", path.call(print, "default")])
       );
@@ -398,7 +402,7 @@ function genericPrint(path, options, print) {
     case "call": {
       const parts = [];
       parts.push(path.call(print, "obj"));
-      parts.push(".");
+      parts.push(n.separator);
       parts.push(path.call(print, "name"));
       return concat(parts);
     }
@@ -418,7 +422,7 @@ function genericPrint(path, options, print) {
     case "field": {
       const parts = [];
       parts.push(path.call(print, "receiver"));
-      parts.push(".");
+      parts.push(n.separator);
       parts.push(path.call(print, "name"));
       return group(concat(parts));
     }

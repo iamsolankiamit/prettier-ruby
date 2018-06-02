@@ -390,8 +390,11 @@ class Processor
   def visit_call(node)
     # Unparser.unparse(node)
     # [:call, obj, :".", name]
-    type, obj, _, name = node
-    { ast_type: type, obj: visit(obj), name: visit(name) }
+    # or
+    # Unparser&.unparse(code)
+    # [:call, obj, :"&.", name]
+    type, obj, separator, name = node
+    { ast_type: type, obj: visit(obj), separator: separator, name: visit(name) }
   end
 
   def visit_array_field(node)
@@ -404,8 +407,10 @@ class Processor
   def visit_field(node)
     # foo.bar
     # [:field, receiver, :".", name]
-    type, receiver, _, name = node
-    { ast_type: type, receiver: visit(receiver), name: visit(name) }
+    # foo&.bar
+    # [:field, receiver, :"&.", name]
+    type, receiver, separator, name = node
+    { ast_type: type, receiver: visit(receiver), separator: separator, name: visit(name) }
   end
 
   def visit_defs(node)
@@ -547,7 +552,7 @@ class Processor
     nodes.each do |node|
       label, default = node
       label = visit(label)
-      default = visit(default)
+      default = visit(default) if default
       params << { ast_type: "label_param", label: label, default: default }
     end
     params
