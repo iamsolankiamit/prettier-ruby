@@ -145,7 +145,8 @@ class Processor
 
       { ast_type: type, args: (args.nil? ? nil : visit(args)) }
     when :args_add_block
-      { ast_type: 'args_add_block', args_body: visit_exps(node[1]) }
+      type, args, opt_block_arg = node
+      { ast_type: type, args_body: visit_exps(args), opt_block_arg: opt_block_arg ? visit(opt_block_arg) : false }
     when :vcall
       { ast_type: 'vcall', value: visit(node[1]) }
     when :defs
@@ -156,6 +157,9 @@ class Processor
       visit_params(node)
     when :rest_param
       { ast_type: 'rest_param', param: visit(node[1]) }
+    when :blockarg
+      type, name = node
+    { ast_type: type, param: visit(name) }
     when :const_path_ref
       visit_path(node)
     when :hash

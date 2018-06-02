@@ -1,0 +1,64 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`block.rb 1`] = `
+def method_receiving_block(&block)
+  block.call
+end
+
+def method_passing_block(&block)
+  other(&block)
+end
+
+def method_passing_block_with_arguments(&block)
+  other(1, 2, 3, &block)
+end
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def method_receiving_block(&block)
+  block.call
+end
+def method_passing_block(&block)
+  other(&block)
+end
+def method_passing_block_with_arguments(&block)
+  other(1, 2, 3, &block)
+end
+
+`;
+
+exports[`default_values.rb 1`] = `
+def join(array, separator = ",")
+  array.join(separator)
+end
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def join(array, separator = ',')
+  array.join(separator)
+end
+
+`;
+
+exports[`optional_keyword_arguments.rb 1`] = `
+def find_file_upwards(filename, start_dir, use_home: false)
+  if use_home
+    puts filename
+  end
+end
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def find_file_upwards(filename, start_dir, use_home: false)
+  puts filename if use_home
+end
+
+`;
+
+exports[`required_keyword_arguments.rb 1`] = `
+def add(x:, y:)
+  x + y
+end
+
+add(x: 10, y: 20)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def add(x:, y:)
+  x + y
+end
+add(x: 10, y: 20)
+
+`;

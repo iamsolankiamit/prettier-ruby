@@ -328,6 +328,10 @@ function genericPrint(path, options, print) {
       return group(join(concat([", ", softline]), params));
     }
 
+    case "blockarg": {
+      return concat(["&", path.call(print, "param")]);
+    }
+
     case "args_with_default": {
       return group(
         concat([path.call(print, "arg"), " = ", path.call(print, "default")])
@@ -419,7 +423,17 @@ function genericPrint(path, options, print) {
     }
 
     case "args_add_block": {
-      return group(join(concat([",", line]), path.map(print, "args_body")));
+      let args = [];
+
+      if (n.args_body.length > 0) {
+        args = args.concat(path.map(print, "args_body"));
+      }
+
+      if (n.opt_block_arg) {
+        args = args.concat(concat(["&", path.call(print, "opt_block_arg")]));
+      }
+
+      return group(join(concat([",", line]), args));
     }
 
     case "@label": {
