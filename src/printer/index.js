@@ -15,16 +15,7 @@ const indent = docBuilders.indent;
 const dedent = docBuilders.dedent;
 const ifBreak = docBuilders.ifBreak;
 
-function printRubyString(raw, options) {
-  // `rawContent` is the string exactly like it appeared in the input source
-  // code, without its enclosing quotes.
-  const modifierResult = /^\w+/.exec(raw);
-  const modifier = modifierResult ? modifierResult[0] : "";
-
-  let rawContent = raw.slice(modifier.length);
-
-  rawContent = rawContent.slice(1, -1);
-
+function printRubyString(rawContent, options) {
   const double = { quote: '"', regex: /"/g };
   const single = { quote: "'", regex: /'/g };
 
@@ -56,7 +47,7 @@ function printRubyString(raw, options) {
   // is enclosed with `enclosingQuote`, but it isn't. The string could contain
   // unnecessary escapes (such as in `"\'"`). Always using `makeString` makes
   // sure that we consistently output the minimum amount of escaped quotes.
-  return modifier + util.makeString(rawContent, enclosingQuote);
+  return util.makeString(rawContent, enclosingQuote);
 }
 
 function printBody(path, print) {
@@ -606,12 +597,26 @@ function genericPrint(path, options, print) {
     case "arg_paren": {
       return path.call(print, "args");
     }
+
+    case "regexp_literal":
+      return concat([
+        "/",
+        join("", path.map(print, "content")),
+        "/",
+        path.call(print, "regexp_end")
+      ]);
+
+    case "@regexp_end":
+      return path.call(print, "regexp_end");
+
     case "string_literal": {
-      return concat(path.map(print, "string_content"));
+      const rawContent = n.string_content[0].content;
+
+      return printRubyString(rawContent, options);
     }
 
     case "@tstring_content": {
-      return printRubyString('"' + path.call(print, "content") + '"', options);
+      return path.call(print, "content");
     }
 
     case "return": {
