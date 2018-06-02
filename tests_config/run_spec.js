@@ -34,6 +34,11 @@ function run_spec(dirname, parsers) {
       });
       const output = prettyprint(source, path, mergedOptions);
       test(`${filename} - ${mergedOptions.parser}-verify`, () => {
+        if (process.env.DEBUG) {
+          // eslint-disable-next-line no-console
+          console.log("Prettier result:\n", output);
+        }
+
         expect(raw(source + "~".repeat(80) + "\n" + output)).toMatchSnapshot(
           filename
         );

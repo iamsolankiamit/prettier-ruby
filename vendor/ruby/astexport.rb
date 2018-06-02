@@ -3,6 +3,8 @@ require 'json'
 require 'pp'
 
 class Processor
+  attr_reader :json, :sexp, :tokens
+
   def initialize(code)
     @json = []
     @code = code
@@ -19,10 +21,6 @@ class Processor
 
   def first_token
     !@tokens.empty? ? @tokens[0] : [[nil,nil],nil,nil]
-  end
-
-  def get_json
-    @json
   end
 
   def visit(node)
@@ -738,6 +736,11 @@ end
 
 data = ARGV.first
 code = data.to_s
-ast = Processor.new(code)
-json = ast.get_json
-puts JSON.pretty_generate(json)
+processor = Processor.new(code)
+
+result = {}
+result[:tokens] = processor.tokens.reverse.pretty_inspect if ENV['DEBUG']
+result[:sexp] = processor.sexp.pretty_inspect if ENV['DEBUG']
+result[:json] = processor.json
+
+puts JSON.pretty_generate(result)
