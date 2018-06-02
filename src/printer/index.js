@@ -152,6 +152,7 @@ function genericPrint(path, options, print) {
       return path.call(print, "ref");
     }
 
+    case "@float":
     case "@imaginary":
     case "@int": {
       return n.value.toString();
