@@ -1,4 +1,5 @@
 # Prettier Ruby Plugin
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors)
 
 <p align="center">
     :construction: Work in Progress! :construction:
@@ -50,3 +51,15 @@ Until this package is officially released to npm you must clone it yourself, and
 * Run `yarn prettier test.rb` to check the output of a single file
 * Run on multiple files with `yarn prettier your_folder/**/*.rb`
 * Save the result with `yarn prettier your_folder/**/*.rb --write`
+
+## Contributors
+
+Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds/all-contributors#emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore -->
+| [<img src="https://avatars2.githubusercontent.com/u/1271782?v=4" width="100px;"/><br /><sub><b>Alan Foster</b></sub>](http://www.alanfoster.me/)<br />[📖](https://github.com/iamsolankiamit/prettier-ruby/commits?author=AlanFoster "Documentation") [🐛](https://github.com/iamsolankiamit/prettier-ruby/issues?q=author%3AAlanFoster "Bug reports") [💻](https://github.com/iamsolankiamit/prettier-ruby/commits?author=AlanFoster "Code") [🤔](#ideas-AlanFoster "Ideas, Planning, & Feedback") |
+| :---: |
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Contributions of any kind welcome!

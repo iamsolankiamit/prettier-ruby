@@ -1,0 +1,25 @@
+{
+  "projectName": "prettier-ruby",
+  "projectOwner": "iamsolankiamit",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": true,
+  "contributors": [
+    {
+      "login": "AlanFoster",
+      "name": "Alan Foster",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/1271782?v=4",
+      "profile": "http://www.alanfoster.me/",
+      "contributions": [
+        "doc",
+        "bug",
+        "code",
+        "ideas"
+      ]
+    }
+  ]
+}
