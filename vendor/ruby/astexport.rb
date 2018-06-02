@@ -547,7 +547,7 @@ class Processor
     nodes.each do |node|
       label, default = node
       label = visit(label)
-      default = visit(default)
+      default = visit(default) if default
       params << { ast_type: "label_param", label: label, default: default }
     end
     params

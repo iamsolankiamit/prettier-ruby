@@ -334,6 +334,12 @@ function genericPrint(path, options, print) {
     }
 
     case "label_param": {
+      if (!n.default) {
+        return group(
+          concat([path.call(print, "label")])
+        );
+      }
+
       return group(
         concat([path.call(print, "label"), " ", path.call(print, "default")])
       );
