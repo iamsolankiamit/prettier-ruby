@@ -587,10 +587,8 @@ function genericPrint(path, options, print) {
     }
 
     case "method_add_arg": {
-      if (n.args.args == null) {
-        return concat([
-          path.call(print, "name")
-        ]);
+      if (n.args.args === null) {
+        return concat([path.call(print, "name")]);
       }
 
       return concat([
@@ -732,6 +730,10 @@ function genericPrint(path, options, print) {
     }
 
     case "array": {
+      if (n.body === null) {
+        return "[]";
+      }
+
       return group(
         concat([
           "[",
