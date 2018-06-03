@@ -300,7 +300,8 @@ function genericPrint(path, options, print) {
         join(concat([",", line]), path.map(print, "label_params"));
 
       const doubleStarParam =
-        n.double_star_param && path.call(print, "double_star_param");
+        n.double_star_param &&
+        concat(["**", path.call(print, "double_star_param")]);
 
       const blockarg = n.blockarg && path.call(print, "blockarg");
 
@@ -326,6 +327,10 @@ function genericPrint(path, options, print) {
         params.push(blockarg);
       }
       return group(join(concat([", ", softline]), params));
+    }
+
+    case "blockarg": {
+      return concat(["&", path.call(print, "param")]);
     }
 
     case "args_with_default": {
@@ -419,7 +424,45 @@ function genericPrint(path, options, print) {
     }
 
     case "args_add_block": {
-      return group(join(concat([",", line]), path.map(print, "args_body")));
+      let args = [];
+
+      if (n.args_body.ast_type === "args_add_star") {
+        args = args.concat(path.call(print, "args_body"));
+      }
+
+      if (n.args_body.length > 0) {
+        args = args.concat(path.map(print, "args_body"));
+      }
+
+      if (n.opt_block_arg) {
+        args = args.concat(concat(["&", path.call(print, "opt_block_arg")]));
+      }
+
+      return group(join(concat([",", line]), args));
+    }
+
+    case "args_add_star": {
+      let args = [];
+
+      if (n.args_body.ast_type === "args_add_star") {
+        args = args.concat(path.call(print, "args_body"));
+      }
+
+      if (n.args_body.length > 0) {
+        args = args.concat(path.map(print, "args_body"));
+      }
+
+      args = args.concat(concat(["*", path.call(print, "value")]));
+
+      if (n.post_args) {
+        args = args.concat(path.call(print, "post_args"));
+      }
+
+      return group(join(concat([",", line]), args));
+    }
+
+    case "assoc_splat": {
+      return concat(["**", path.call(print, "value")]);
     }
 
     case "@label": {
@@ -790,7 +833,7 @@ function genericPrint(path, options, print) {
 
     default:
       // eslint-disable-next-line no-console
-      console.error("Unknown Ruby Node:", n);
+      console.error("Unhandled node within src/printer/index.js: ", n);
       return JSON.stringify(n);
   }
 }
