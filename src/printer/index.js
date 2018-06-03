@@ -513,6 +513,19 @@ function genericPrint(path, options, print) {
       return path.call(print, "value");
     }
 
+    case "opassign": {
+      const targetParts = [];
+      targetParts.push(path.call(print, "target"), line, path.call(print, "op"));
+      let value = group(path.call(print, "value"));
+      if (n.value.ast_type !== "hash") {
+        value = indent(group(concat([line, value])));
+      } else {
+        targetParts.push(line);
+      }
+      const target = group(concat(targetParts));
+      return concat([target, value]);
+    }
+
     case "assign": {
       const targetParts = [];
       targetParts.push(path.call(print, "target"), line, "=");

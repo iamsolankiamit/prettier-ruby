@@ -35,8 +35,11 @@ class Processor
     when :class
       visit_class(node)
     when :assign
-      target, value = visit_assign(node)
-      { ast_type: 'assign', target: target, value: value }
+      type, target, value = node
+      { ast_type: type, target: visit(target), value: visit(value) }
+    when :opassign
+      type, target, op, value = node
+      { ast_type: type, target: visit(target), op: visit(op), value: visit(value) }
     when :var_field
       body = visit(node[1])
       { ast_type: 'var_field', body: body }
@@ -495,13 +498,6 @@ class Processor
         exprs << visit(exp) unless type == :void_stmt
       end
     exprs
-  end
-
-  def visit_assign(node)
-    _, target, value = node
-    target = visit(target)
-    value = visit(value)
-    [target, value]
   end
 
   def isEmpty?(args)
