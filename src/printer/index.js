@@ -12,6 +12,7 @@ const line = docBuilders.line;
 const softline = docBuilders.softline;
 const group = docBuilders.group;
 const indent = docBuilders.indent;
+const align = docBuilders.align;
 const dedent = docBuilders.dedent;
 const ifBreak = docBuilders.ifBreak;
 
@@ -768,6 +769,19 @@ function genericPrint(path, options, print) {
     case "unless_mod": {
       const parts = printConditionalBlock(n, path, print, "unless", true);
       return concat(parts);
+    }
+
+    case "ifop": {
+      const ternaryBody = concat([
+        line,
+        "? ",
+        align(2, path.call(print, "then_body")),
+        line,
+        ": ",
+        align(2, path.call(print, "else_body"))
+      ]);
+
+      return concat([path.call(print, "cond"), indent(ternaryBody)]);
     }
 
     case "if": {
