@@ -180,6 +180,13 @@ class Processor
     when :@label
       # [:@label, "foo:", [1, 3]]
       { ast_type: '@label', value: node[1] }
+    when :regexp_literal
+      type, content, regexp_end = node
+
+      { ast_type: type, content: visit_exps(content), regexp_end: visit(regexp_end) }
+    when :@regexp_end
+      type, regexp_end = node
+      { ast_type: type, regexp_end: regexp_end }
     when :string_literal, :xstring_literal
       visit_string_literal(node)
     when :string_content
