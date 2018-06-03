@@ -599,6 +599,10 @@ function genericPrint(path, options, print) {
       return concat([target, right]);
     }
 
+    case "yield0": {
+      return "yield";
+    }
+
     case "yield": {
       const parts = [];
       parts.push("yield");

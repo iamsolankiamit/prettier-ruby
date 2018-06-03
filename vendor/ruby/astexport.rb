@@ -230,6 +230,8 @@ class Processor
       visit_binary(node)
     when :unary
       visit_unary(node)
+    when :yield0
+      { ast_type: :yield0 }
     when :yield
       visit_yield(node)
     when :paren
