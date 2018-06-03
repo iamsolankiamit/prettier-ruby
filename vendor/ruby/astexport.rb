@@ -144,9 +144,13 @@ class Processor
       type, args = node
 
       { ast_type: type, args: (args.nil? ? nil : visit(args)) }
+    when :args_add_star
+      visit_args_add_star(node)
+    when :assoc_splat
+      type, value = node
+      { ast_type: type, value: visit(value) }
     when :args_add_block
-      type, args, opt_block_arg = node
-      { ast_type: type, args_body: visit_exps(args), opt_block_arg: opt_block_arg ? visit(opt_block_arg) : false }
+      visit_args_add_block(node)
     when :vcall
       { ast_type: 'vcall', value: visit(node[1]) }
     when :defs
@@ -256,7 +260,7 @@ class Processor
     when :break
       visit_break(node)
     else
-      { ast_type: node.first, error: "Unhandled node: #{node.first}" }
+      { ast_type: node.first, error: "Unhandled node within #{File.basename(__FILE__)}: #{node.first}" }
     end
   end
 
@@ -511,6 +515,30 @@ class Processor
   def isEmpty?(args)
     a, b, c, d, e, f, g, h = args
     !a && !b && !c && !d && !e && !f && !g && !h
+  end
+
+
+  def visit_args_add_block(node)
+    type, args, opt_block_arg = node
+    is_args_add_star = args.any? && args[0] == :args_add_star
+
+    {
+      ast_type: type,
+      args_body: is_args_add_star ? visit(args) : visit_exps(args),
+      opt_block_arg: opt_block_arg ? visit(opt_block_arg) : false
+    }
+  end
+
+  def visit_args_add_star(node)
+    type, args, value, post_args = node
+    is_args_add_star = args.any? && args[0] == :args_add_star
+
+    {
+      ast_type: type,
+      args_body: is_args_add_star ? visit(args) : visit_exps(args),
+      value: visit(value),
+      post_args: post_args ? visit(post_args) : false
+    }
   end
 
   def visit_block_args(node)

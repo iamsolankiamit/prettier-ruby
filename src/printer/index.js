@@ -425,6 +425,10 @@ function genericPrint(path, options, print) {
     case "args_add_block": {
       let args = [];
 
+      if (n.args_body.ast_type === "args_add_star") {
+        args = args.concat(path.call(print, "args_body"));
+      }
+
       if (n.args_body.length > 0) {
         args = args.concat(path.map(print, "args_body"));
       }
@@ -434,6 +438,30 @@ function genericPrint(path, options, print) {
       }
 
       return group(join(concat([",", line]), args));
+    }
+
+    case "args_add_star": {
+      let args = [];
+
+      if (n.args_body.ast_type === "args_add_star") {
+        args = args.concat(path.call(print, "args_body"));
+      }
+
+      if (n.args_body.length > 0) {
+        args = args.concat(path.map(print, "args_body"));
+      }
+
+      args = args.concat(concat(["*", path.call(print, "value")]));
+
+      if (n.post_args) {
+        args = args.concat(path.call(print, "post_args"));
+      }
+
+      return group(join(concat([",", line]), args));
+    }
+
+    case "assoc_splat": {
+      return concat(["**", path.call(print, "value")]);
     }
 
     case "@label": {
@@ -791,7 +819,7 @@ function genericPrint(path, options, print) {
 
     default:
       // eslint-disable-next-line no-console
-      console.error("Unknown Ruby Node:", n);
+      console.error("Unhandled node within src/printer/index.js: ", n);
       return JSON.stringify(n);
   }
 }
