@@ -64,9 +64,21 @@ function printConditionalBlock(node, path, print, conditional, isSingleLine) {
     ? path.call(print, "then_body")
     : join(hardline, path.map(print, "then_body"));
   if (isSingleLine || trySingleLine) {
-    parts.push(
-      group(concat([thenBody, " ", conditional, " ", path.call(print, "cond")]))
+    const subParts = [];
+    const conditionalPart = concat([
+      conditional,
+      " ",
+      path.call(print, "cond")
+    ]);
+    subParts.push(ifBreak(conditionalPart, thenBody));
+    subParts.push(
+      ifBreak(
+        indent(group(concat([line, thenBody]))),
+        concat([" ", conditionalPart])
+      )
     );
+    subParts.push(ifBreak(concat([line, "end"]), ""));
+    parts.push(group(concat(subParts)));
   } else {
     parts.push(
       group(concat([conditional, " ", group(path.call(print, "cond"))]))
@@ -398,7 +410,7 @@ function genericPrint(path, options, print) {
       let finalBody = group(concat(["(", body, ")"]));
       const name = n.name && path.call(print, "name");
       if (keywords.hasOwnProperty(name)) {
-        finalBody = group(concat([line, body]));
+        finalBody = group(concat([" ", body]));
       }
       const parts = [];
       parts.push(name);
@@ -549,7 +561,11 @@ function genericPrint(path, options, print) {
 
     case "opassign": {
       const targetParts = [];
-      targetParts.push(path.call(print, "target"), line, path.call(print, "op"));
+      targetParts.push(
+        path.call(print, "target"),
+        line,
+        path.call(print, "op")
+      );
       let value = group(path.call(print, "value"));
       if (n.value.ast_type !== "hash") {
         value = indent(group(concat([line, value])));
@@ -741,6 +757,16 @@ function genericPrint(path, options, print) {
 
     case "until_mod": {
       const parts = printConditionalBlock(n, path, print, "until", true);
+      return concat(parts);
+    }
+
+    case "unless": {
+      const parts = printConditionalBlock(n, path, print, "unless");
+      return concat(parts);
+    }
+
+    case "unless_mod": {
+      const parts = printConditionalBlock(n, path, print, "unless", true);
       return concat(parts);
     }
 

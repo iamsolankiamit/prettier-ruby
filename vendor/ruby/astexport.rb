@@ -221,6 +221,10 @@ class Processor
       visit_hash_key_value(node)
     when :until
       visit_until(node)
+    when :unless_mod
+      visit_unless_mod(node)
+    when :unless
+      visit_unless(node)
     when :if
       visit_if(node)
     when :elsif
@@ -668,9 +672,18 @@ class Processor
   end
 
   def visit_until_mod(node)
-    # then unless cond
+    # then until cond
     #
     # [:until_mod, cond, body]
+    type, cond, body = node
+
+    { ast_type: type, then_body: visit(body), cond: visit(cond) }
+  end
+
+  def visit_unless_mod(node)
+    # then unless cond
+    #
+    # [:unless_mod, cond, body]
     type, cond, body = node
 
     { ast_type: type, then_body: visit(body), cond: visit(cond) }
@@ -711,6 +724,24 @@ class Processor
     # end
     #
     # [:until, cond, then, else]
+    type, cond, then_body, else_body = node
+
+    {
+      ast_type: type,
+      cond: visit(cond),
+      then_body: then_body ? visit_exps(then_body) : nil,
+      else_body: else_body ? visit(else_body) : nil
+    }
+  end
+
+  def visit_unless(node)
+    # unless cond
+    #   then_body
+    # else
+    #   else_body
+    # end
+    #
+    # [:unless, cond, then, else]
     type, cond, then_body, else_body = node
 
     {

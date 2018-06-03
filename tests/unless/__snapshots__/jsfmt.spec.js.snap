@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`unless.rb 1`] = `
+unless false
+  puts "this is true"
+end
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+puts 'this is true' unless false
+
+`;
+
+exports[`unless_2.rb 1`] = `
+unless false
+  puts "this is true, and a very long line so that it doesn't collapse into a single line unless statement."
+end
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+unless false
+  puts "this is true, and a very long line so that it doesn't collapse into a single line unless statement."
+end
+
+`;
+
+exports[`unless_3.rb 1`] = `
+(0..100).each do |i|
+  next unless i % 2 == 0
+
+  puts i
+end
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+0..100.each do |i|
+  next unless i % 2 == 0
+  puts i
+end
+
+`;
+
+exports[`unless_4.rb 1`] = `
+unless false
+  puts "this is true"
+  puts "Multi line unless"
+end
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+unless false
+  puts 'this is true'
+  puts 'Multi line unless'
+end
+
+`;
