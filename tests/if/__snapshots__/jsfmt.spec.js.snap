@@ -47,3 +47,17 @@ end
 puts 'this is true' if foo
 
 `;
+
+exports[`if_4.rb 1`] = `
+if debug?
+  puts "debugging statement"
+end
+
+puts "debugging statement" if debug?
+puts "debugging statement" if debug?()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+puts 'debugging statement' if debug?
+puts 'debugging statement' if debug?
+puts 'debugging statement' if debug?
+
+`;

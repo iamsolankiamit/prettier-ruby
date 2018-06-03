@@ -131,7 +131,8 @@ class Processor
     when :method_add_block
       { ast_type: 'method_add_block', call: visit(node[1]), block: visit(node[2]) }
     when :method_add_arg
-      { ast_type: 'method_add_arg', name: visit(node[1]), args: visit(node[2]) }
+      type, name, args = node
+      { ast_type: type, name: visit(name), args: args.any? ? visit(args) : [] }
     when :fcall
       { ast_type: 'fcall', name: visit(node[1]) }
     when :do_block
