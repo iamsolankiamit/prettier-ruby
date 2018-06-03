@@ -300,7 +300,8 @@ function genericPrint(path, options, print) {
         join(concat([",", line]), path.map(print, "label_params"));
 
       const doubleStarParam =
-        n.double_star_param && path.call(print, "double_star_param");
+        n.double_star_param &&
+        concat(["**", path.call(print, "double_star_param")]);
 
       const blockarg = n.blockarg && path.call(print, "blockarg");
 
