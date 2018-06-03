@@ -1,0 +1,83 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`rescue.rb 1`] = `
+def do_something!
+  potential_explosion!
+rescue CustomError
+  puts "custom error"
+rescue FooError, BarError
+  puts "foo or bar"
+rescue FooError => with_arrow
+  puts "foo with e"
+rescue FooError, BarError => with_arrow
+  puts "foo or bar with e"
+rescue
+  puts "rescued"
+rescue *ALLOWED_ERRORS
+  puts "rescued allowed errors"
+rescue *ALLOWED_ERRORS_TWO => with_arrow
+  puts "rescued allowed errors"
+rescue FooError, BarError, *ALLOWED_ERRORS
+  puts "rescued allowed errors"
+rescue FooError, BarError, *ALLOWED_ERRORS => with_arrow
+  puts "rescued allowed errors"
+rescue without_arrow
+  puts "rescued"
+rescue => with_arrow
+  puts "rescued"
+ensure
+  puts "Closing resources"
+end
+
+explode! rescue ::CustomError
+explode! rescue nil
+
+def try_three_times
+  tries ||= 3
+  yield
+rescue => e
+  retry unless (tries -= 1).zero?
+else
+  puts "Success"
+end
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def do_something!
+  potential_explosion!
+rescue CustomError
+  puts 'custom error'
+rescue FooError, BarError
+  puts 'foo or bar'
+rescue FooError => with_arrow
+  puts 'foo with e'
+rescue FooError, BarError => with_arrow
+  puts 'foo or bar with e'
+rescue
+  puts 'rescued'
+rescue *ALLOWED_ERRORS
+  puts 'rescued allowed errors'
+rescue *ALLOWED_ERRORS_TWO => with_arrow
+  puts 'rescued allowed errors'
+rescue FooError, BarError, *ALLOWED_ERRORS
+  puts 'rescued allowed errors'
+rescue FooError, BarError, *ALLOWED_ERRORS => with_arrow
+  puts 'rescued allowed errors'
+rescue without_arrow
+  puts 'rescued'
+rescue => with_arrow
+  puts 'rescued'
+ensure
+  puts 'Closing resources'
+end
+explode! rescue ::CustomError
+explode! rescue nil
+def try_three_times
+  tries ||= 3
+  yield
+rescue => e
+  retry unless tries -= 1.zero?
+else
+  puts 'Success'
+end
+
+`;

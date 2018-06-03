@@ -232,6 +232,17 @@ class Processor
       visit_if(node)
     when :return
       visit_return(node)
+    when :retry
+      { ast_type: :retry }
+    when :rescue
+      visit_rescue(node)
+    when :rescue_mod
+      type, body, cond  = node
+
+      { ast_type: type, body: visit(body), cond: visit(cond) }
+    when :ensure
+      type, body = node
+      { ast_type: type, bodystmt: visit_exps(body) }
     when :@tstring_content
       type, content = node
       { ast_type: type, content: content }
@@ -270,6 +281,9 @@ class Processor
       visit_defined(node)
     when :mrhs_new_from_args
       visit_mrhs_new_from_args(node)
+    when :mrhs_add_star
+      type, left, right = node
+      { ast_type: type, left: left.any? ? visit(left) : nil, right: visit(right) }
     when :next
       visit_next(node)
     when :undef
@@ -340,6 +354,18 @@ class Processor
     { ast_type: type, bodystmt: visit_exps(bodystmt)}
   end
 
+  def visit_rescue(node)
+    type, types, name, body, additional_rescues = node
+
+    {
+      ast_type: type,
+      types: types.nil? ? nil : visit_exps(to_ary(types)),
+      name: name.nil? ? nil : visit(name),
+      bodystmt: body.nil? ? nil : visit_exps(body),
+      additional_rescues: additional_rescues.nil? ? nil : visit(additional_rescues)
+    }
+  end
+
   def to_ary(node = [])
     node[0].is_a?(Symbol) ? [node] : node
   end
@@ -353,7 +379,7 @@ class Processor
       exps = visit_exps(exps)
       final_exp = visit(final_exp)
     else
-      exp = visit_exps(to_ary(exps))
+      exps = visit_exps(to_ary(exps))
     end
     { ast_type: type, exps: exps, final_exp: final_exp }
   end
