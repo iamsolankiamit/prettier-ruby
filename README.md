@@ -9,6 +9,12 @@
 
 Please note that this plugin is under active development, and might not be ready to run on production code yet.
 
+## How it works
+
+Prettier-Ruby relies on [Ripper](https://docs.ruby-lang.org/en/2.5.0/Ripper.html), the official parser
+of Ruby to understand your code. Once your code has been read and parsed, it is then reformatted using
+the [formatting commands](https://github.com/prettier/prettier/blob/master/commands.md) provided by Prettier.
+
 ## Contributing
 
 If you're interested in contributing to the development of Prettier for Ruby:
@@ -29,6 +35,10 @@ as well as the final prettier-ruby result by appending `DEBUG=true` when running
 ```bash
 DEBUG=true yarn run test --watch
 ```
+
+You should now see some useful debug output in your console:
+
+![Debug mode enabled, showing the parsed Ruby tokens and more](./documentation/debug-example.png)
 
 You can run the Ruby AST Exporter directly with a given string too:
 
