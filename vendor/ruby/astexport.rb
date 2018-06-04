@@ -824,4 +824,4 @@ result[:tokens] = processor.tokens.reverse.pretty_inspect if ENV['DEBUG']
 result[:sexp] = processor.sexp.pretty_inspect if ENV['DEBUG']
 result[:json] = processor.json
 
-puts JSON.pretty_generate(result)
+puts JSON.pretty_generate(result, max_nesting: false)
