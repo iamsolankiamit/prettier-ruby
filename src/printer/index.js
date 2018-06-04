@@ -371,15 +371,64 @@ function genericPrint(path, options, print) {
       );
     }
 
+    case "retry": {
+      return "retry";
+    }
+
+    case "rescue_mod": {
+      return concat([
+        path.call(print, "body"),
+        " rescue ",
+        path.call(print, "cond")
+      ]);
+    }
+
+    case "rescue": {
+      let parts = [hardline, "rescue"];
+
+      if (n.types) {
+        parts.push(" ");
+        parts = parts.concat(join(",", path.map(print, "types")));
+      }
+
+      if (n.name) {
+        parts.push(" => ");
+        parts.push(path.call(print, "name"));
+      }
+
+      if (n.bodystmt) {
+        parts.push(
+          indent(concat([hardline, group(concat(path.map(print, "bodystmt")))]))
+        );
+      }
+
+      if (n.additional_rescues) {
+        parts.push(path.call(print, "additional_rescues"));
+      }
+
+      return concat(parts);
+    }
+
+    case "ensure": {
+      return concat([
+        hardline,
+        "ensure",
+        indent(concat([hardline, group(concat(path.map(print, "bodystmt")))]))
+      ]);
+    }
+
     case "bodystmt": {
       const bodyStatementParts = [];
       const body = n.body && join(hardline, path.map(print, "body"));
+
       const rescueBody =
-        n.rescue_body && join(hardline, path.map(print, "rescue_body"));
+        n.rescue_body && dedent(path.call(print, "rescue_body"));
       const elseBody =
-        n.else_body && join(hardline, path.map(print, "else_body"));
+        n.else_body &&
+        dedent(concat([hardline, path.call(print, "else_body")]));
+
       const ensureBody =
-        n.ensure_body && join(hardline, path.map(print, "ensure_body"));
+        n.ensure_body && dedent(path.call(print, "ensure_body"));
 
       if (body) {
         bodyStatementParts.push(body);
@@ -443,6 +492,18 @@ function genericPrint(path, options, print) {
       }
 
       return group(join(concat([",", line]), args));
+    }
+
+    case "mrhs_add_star": {
+      const parts = [];
+
+      if (n.left) {
+        parts.push(path.call(print, "left"));
+      }
+
+      parts.push(concat(["*", path.call(print, "right")]));
+
+      return concat(parts);
     }
 
     case "args_add_star": {
@@ -524,10 +585,10 @@ function genericPrint(path, options, print) {
     }
 
     case "mrhs_new_from_args": {
-      return join(concat([",", line]), [
-        join(concat([",", line]), path.map(print, "exps")),
-        path.call(print, "final_exp")
-      ]);
+      const args = path
+        .map(print, "exps")
+        .concat(path.call(print, "final_exp"));
+      return join(", ", args);
     }
 
     case "const_ref": {
