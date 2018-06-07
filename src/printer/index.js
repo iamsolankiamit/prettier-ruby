@@ -129,6 +129,18 @@ function genericPrint(path, options, print) {
       return concat(parts);
     }
 
+    case "sclass": {
+      const name = path.call(print, "name");
+      let parts = [];
+      parts.push("class << ");
+      parts.push(name);
+      parts = [group(concat(parts))];
+
+      const body = path.call(print, "body");
+      parts.push(indent(concat([hardline, body])), hardline, "end");
+      return concat(parts);
+    }
+
     case "class": {
       const name = path.call(print, "name");
       const superClass = path.call(print, "superclass");
