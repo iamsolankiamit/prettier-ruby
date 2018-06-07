@@ -508,13 +508,8 @@ class Processor
 
     symbol = key[0] == :symbol_literal
     arrow = symbol || !(key[0] == :@label || key[0] == :dyna_symbol)
-    if arrow
-      key = visit key[1]
-    else
-      key = visit key
-    end
-    value = visit value
-    { ast_type: type, key: key, value: value, has_arrow: arrow }
+
+    { ast_type: type, key: visit(key), value: visit(value), has_arrow: arrow }
   end
 
   def visit_command(node)
