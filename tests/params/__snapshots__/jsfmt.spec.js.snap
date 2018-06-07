@@ -99,3 +99,19 @@ def foo(arg1, *splat, **splat_splat)
 end
 
 `;
+
+exports[`to_proc.rb 1`] = `
+models.map { |model| model.uuid }
+models.map(&:uuid)
+models.map &:uuid
+
+[1, 2, 3].inject(&:+)
+[1, 2, 3].inject &:+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+models.map { |model| model.uuid }
+models.map(&:uuid)
+models.map &:uuid
+[1, 2, 3].inject(&:+)
+[1, 2, 3].inject &:+
+
+`;
