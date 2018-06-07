@@ -767,7 +767,6 @@ function genericPrint(path, options, print) {
       return concat([
         "/",
         join("", path.map(print, "content")),
-        "/",
         path.call(print, "regexp_end")
       ]);
 
