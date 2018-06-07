@@ -32,6 +32,9 @@ class Processor
       # ["module", const_path_ref, bodystmt]
       type, name, body = node
       { ast_type: type, name: visit(name), body: visit(body) }
+    when :sclass
+      type, name, body = node
+      { ast_type: type, name: visit(name), body: visit(body) }
     when :class
       visit_class(node)
     when :assign
