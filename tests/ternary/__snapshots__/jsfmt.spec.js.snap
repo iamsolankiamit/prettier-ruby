@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ternary.rb 1`] = `
+exports[`ternary.rb - ruby-verify: ternary.rb 1`] = `
 a = true ? 1 : 2
 a = true ? true ? 1 : 2 : 3
 a = (very_long_expression? || other_very_long_expression?) ? 1 : 2

@@ -1,13 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`super.1.rb 1`] = `
+exports[`super.1.rb - ruby-verify: super.1.rb 1`] = `
 super 1, 2, 3, other_args
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 super 1, 2, 3, other_args
 
 `;
 
-exports[`super.rb 1`] = `
+exports[`super.rb - ruby-verify: super.rb 1`] = `
 super
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 super

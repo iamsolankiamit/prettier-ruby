@@ -1,13 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`send.rb 1`] = `
+exports[`send.rb - ruby-verify: send.rb 1`] = `
 node.children[1..-1].map { |c| process(c) }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 node.children[1..-1].map { |c| process(c) }
 
 `;
 
-exports[`send_1.rb 1`] = `
+exports[`send_1.rb - ruby-verify: send_1.rb 1`] = `
 a = {
   line: node.loc.line,
   ast_type: node.type,
@@ -26,7 +26,7 @@ a
 
 `;
 
-exports[`send_2.rb 1`] = `
+exports[`send_2.rb - ruby-verify: send_2.rb 1`] = `
 def on_def(node)
   childrens = node.children[1..-1].map { |c| process(c) }
   args = childrens.select { |c| c[:ast_type] == :args }
@@ -55,42 +55,42 @@ end
 
 `;
 
-exports[`send_3.rb 1`] = `
+exports[`send_3.rb - ruby-verify: send_3.rb 1`] = `
 source_buffer.source = File.read(@filename, encoding: Encoding::UTF_8)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 source_buffer.source = File.read(@filename, encoding: Encoding::UTF_8)
 
 `;
 
-exports[`send_4.rb 1`] = `
+exports[`send_4.rb - ruby-verify: send_4.rb 1`] = `
 foo + 1
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 foo + 1
 
 `;
 
-exports[`send_5.rb 1`] = `
+exports[`send_5.rb - ruby-verify: send_5.rb 1`] = `
 -foo
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -foo
 
 `;
 
-exports[`send_6.rb 1`] = `
+exports[`send_6.rb - ruby-verify: send_6.rb 1`] = `
 bar[1, 2] = baz
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 bar[1, 2] = baz
 
 `;
 
-exports[`send_7.rb 1`] = `
+exports[`send_7.rb - ruby-verify: send_7.rb 1`] = `
 foo.a = 1
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 foo.a = 1
 
 `;
 
-exports[`send_safe_navigation.rb 1`] = `
+exports[`send_safe_navigation.rb - ruby-verify: send_safe_navigation.rb 1`] = `
 account&.owner&.address
 account&.owner&.address = "hello"
 account&.owner&.foo("hello")

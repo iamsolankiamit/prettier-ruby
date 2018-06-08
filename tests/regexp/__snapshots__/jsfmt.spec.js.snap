@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`regexp.rb 1`] = `
+exports[`regexp.rb - ruby-verify: regexp.rb 1`] = `
 /\\A[\\w+-_]+\\Z/mi
 /foo/u
 /foo/e
