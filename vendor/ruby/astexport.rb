@@ -139,7 +139,12 @@ class Processor
     when :fcall
       { ast_type: 'fcall', name: visit(node[1]) }
     when :do_block
-      { ast_type: 'do_block', args: visit(node[1]), body: visit_exps(node[2]) }
+      type, args, body = node
+      {
+        ast_type: type,
+        args: args.nil? ? nil : visit(args),
+        body: visit_exps(body)
+      }
     when :brace_block
       visit_brace_block(node)
     when :block_var
@@ -418,7 +423,11 @@ class Processor
   def visit_brace_block(node)
     # [:brace_block, args, body]
     type, args, body = node
-    { ast_type: type, args: visit(args), body: visit_exps(body) }
+    {
+      ast_type: type,
+      args: args.nil? ? nil : visit(args),
+      body: visit_exps(body)
+    }
   end
 
   def visit_range(node)
