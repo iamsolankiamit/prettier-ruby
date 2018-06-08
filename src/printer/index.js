@@ -895,20 +895,26 @@ function genericPrint(path, options, print) {
 
     case "brace_block": {
       const parts = [];
-      parts.push(
-        " { ",
-        "|",
-        path.call(print, "args"),
-        "| ",
-        join("; ", path.map(print, "body")),
-        " }"
-      );
+      parts.push(" { ");
+      if (n.args) {
+        parts.push("|");
+        parts.push(path.call(print, "args"));
+        parts.push("| ");
+      }
+      parts.push(join("; ", path.map(print, "body")));
+      parts.push(" }");
       return group(concat(parts));
     }
 
     case "do_block": {
       const parts = [];
-      parts.push(group(concat([" do ", "|", path.call(print, "args"), "|"])));
+
+      if (n.args) {
+        parts.push(group(concat([" do ", "|", path.call(print, "args"), "|"])));
+      } else {
+        parts.push(" do ")
+      }
+
       parts.push(
         indent(concat([hardline, join(hardline, path.map(print, "body"))]))
       );
