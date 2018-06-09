@@ -695,6 +695,23 @@ function genericPrint(path, options, print) {
       return group(concat(parts));
     }
 
+    case "mlhs_paren": {
+      return concat(["(", join(", ", path.map(print, "exps")), ")"]);
+    }
+
+    case "mlhs_add_star": {
+      let args = [];
+
+      args = args.concat(path.map(print, "left"));
+      args = args.concat(concat(["*", path.call(print, "star")]));
+
+      if (n.right) {
+        args = args.concat(path.map(print, "right"));
+      }
+
+      return join(", ", args);
+    }
+
     case "paren": {
       const parts = [];
       const hasExp = !!n.exps;

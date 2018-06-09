@@ -262,6 +262,17 @@ class Processor
       visit_yield(node)
     when :paren
       visit_paren(node)
+    when :mlhs_paren
+      visit_paren(node)
+    when :mlhs_add_star
+      type, left, star, right = node
+
+      {
+        ast_type: type,
+        left: visit_exps(left),
+        star: visit(star),
+        right: right.nil? ? nil : visit_exps(right)
+      }
     when :lambda
       visit_lambda(node)
     when :case
@@ -412,7 +423,7 @@ class Processor
   def visit_multiple_assign(node)
     # [:massign, lefts, right]
     type, lefts, right = node
-    { ast_type: type, lefts: visit_exps(lefts), right: visit(right) }
+    { ast_type: type, lefts: visit_exps(to_ary(lefts)), right: visit(right) }
   end
 
   def visit_brace_block(node)
