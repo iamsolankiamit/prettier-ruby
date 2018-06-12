@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`float.rb 1`] = `
+exports[`float.rb - ruby-verify: float.rb 1`] = `
 6543.21
 6543.21.modulo(137.24)
 2.0**3

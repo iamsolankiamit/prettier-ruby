@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`masgn.rb 1`] = `
+exports[`masgn.rb - ruby-verify: masgn.rb 1`] = `
 atok, comments = Parser::CurrentRuby.parse_with_comments(data.to_s)
 head, *tail = [1, 2, 3, 4, 5]
 head, *_, last = [1, 2, 3, 4, 5]

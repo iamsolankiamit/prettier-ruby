@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`leftValueAssign.rb 1`] = `
+exports[`leftValueAssign.rb - ruby-verify: leftValueAssign.rb 1`] = `
 file = dir + filename
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 file = dir + filename

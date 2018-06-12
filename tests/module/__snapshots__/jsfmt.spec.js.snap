@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`module_1.rb 1`] = `
+exports[`module_1.rb - ruby-verify: module_1.rb 1`] = `
 module ::A::B::C
   module NestedModule::Foo
     class ClassName

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`if.rb 1`] = `
+exports[`if.rb - ruby-verify: if.rb 1`] = `
 if x == true
   puts 'yes'
 elsif x == false
@@ -23,7 +23,7 @@ end
 
 `;
 
-exports[`if_2.rb 1`] = `
+exports[`if_2.rb - ruby-verify: if_2.rb 1`] = `
 if true
   puts "this is true"
 end
@@ -32,7 +32,7 @@ puts 'this is true' if true
 
 `;
 
-exports[`if_3.rb 1`] = `
+exports[`if_3.rb - ruby-verify: if_3.rb 1`] = `
 def foo()
   true
 end
@@ -48,7 +48,7 @@ puts 'this is true' if foo
 
 `;
 
-exports[`if_4.rb 1`] = `
+exports[`if_4.rb - ruby-verify: if_4.rb 1`] = `
 if debug?
   puts "debugging statement"
 end

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`hash.rb 1`] = `
+exports[`hash.rb - ruby-verify: hash.rb 1`] = `
 numbers = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7 }
 numbers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -9,7 +9,7 @@ numbers
 
 `;
 
-exports[`hash_2.rb 1`] = `
+exports[`hash_2.rb - ruby-verify: hash_2.rb 1`] = `
 numbers = { one: 1, two: 2, three: 3 }
 numbers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -18,7 +18,7 @@ numbers
 
 `;
 
-exports[`hash_3.rb 1`] = `
+exports[`hash_3.rb - ruby-verify: hash_3.rb 1`] = `
 numbers = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10 }
 numbers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -38,7 +38,7 @@ numbers
 
 `;
 
-exports[`hash_4.rb 1`] = `
+exports[`hash_4.rb - ruby-verify: hash_4.rb 1`] = `
 numbers = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, hash: { test: 1, test_2: 2}, hash_two: { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9 }, }
 numbers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -70,7 +70,7 @@ numbers
 
 `;
 
-exports[`hash_5.rb 1`] = `
+exports[`hash_5.rb - ruby-verify: hash_5.rb 1`] = `
 { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 10, eleven: 11, twenty: 20 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 {
@@ -89,7 +89,7 @@ exports[`hash_5.rb 1`] = `
 
 `;
 
-exports[`hash_rocket.rb 1`] = `
+exports[`hash_rocket.rb - ruby-verify: hash_rocket.rb 1`] = `
 ROCKET = {
   'a' => 1,
   'b' => 2,

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`break.rb 1`] = `
+exports[`break.rb - ruby-verify: break.rb 1`] = `
 break
 
 break foo, bar

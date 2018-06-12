@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`block.rb 1`] = `
+exports[`block.rb - ruby-verify: block.rb 1`] = `
 def method_receiving_block(&block)
   block.call
 end
@@ -25,7 +25,7 @@ end
 
 `;
 
-exports[`default_values.rb 1`] = `
+exports[`default_values.rb - ruby-verify: default_values.rb 1`] = `
 def join(array, separator = ",")
   array.join(separator)
 end
@@ -36,7 +36,7 @@ end
 
 `;
 
-exports[`optional_keyword_arguments.rb 1`] = `
+exports[`optional_keyword_arguments.rb - ruby-verify: optional_keyword_arguments.rb 1`] = `
 def find_file_upwards(filename, start_dir, use_home: false)
   if use_home
     puts filename
@@ -49,7 +49,7 @@ end
 
 `;
 
-exports[`required_keyword_arguments.rb 1`] = `
+exports[`required_keyword_arguments.rb - ruby-verify: required_keyword_arguments.rb 1`] = `
 def add(x:, y:)
   x + y
 end
@@ -63,7 +63,7 @@ add(x: 10, y: 20)
 
 `;
 
-exports[`splat.rb 1`] = `
+exports[`splat.rb - ruby-verify: splat.rb 1`] = `
 splat(*splat1)
 splat(1, 2, 3, *splat1)
 splat(1, 2, 3, *splat1, *splat2)
@@ -100,7 +100,7 @@ end
 
 `;
 
-exports[`to_proc.rb 1`] = `
+exports[`to_proc.rb - ruby-verify: to_proc.rb 1`] = `
 models.map { |model| model.uuid }
 models.map(&:uuid)
 models.map &:uuid

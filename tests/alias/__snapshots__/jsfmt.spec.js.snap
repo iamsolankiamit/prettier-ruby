@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`alias.rb 1`] = `
+exports[`alias.rb - ruby-verify: alias.rb 1`] = `
 alias $foo $bar
 
 alias store []=
