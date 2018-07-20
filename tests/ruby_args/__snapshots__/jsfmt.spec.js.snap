@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`args.rb - ruby-verify: args.rb 1`] = `
+exports[`args.rb 1`] = `
 def hello arguments
   puts arguments
 end
@@ -11,7 +11,7 @@ end
 
 `;
 
-exports[`args_1.rb - ruby-verify: args_1.rb 1`] = `
+exports[`args_1.rb 1`] = `
 def hello
   puts 'no args'
 end

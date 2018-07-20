@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`class_1.rb - ruby-verify: class_1.rb 1`] = `
+exports[`class_1.rb 1`] = `
 class TestClass
   def initialize(a)
     puts a
@@ -14,7 +14,7 @@ end
 
 `;
 
-exports[`class_2.rb - ruby-verify: class_2.rb 1`] = `
+exports[`class_2.rb 1`] = `
 class Processor < AST::Processor
   def initialize(a)
     puts a
@@ -29,7 +29,7 @@ end
 
 `;
 
-exports[`class_3.rb - ruby-verify: class_3.rb 1`] = `
+exports[`class_3.rb 1`] = `
 class MyClass
   class << self
     def my_method

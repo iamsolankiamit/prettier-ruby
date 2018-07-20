@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`yield.rb - ruby-verify: yield.rb 1`] = `
+exports[`yield.rb 1`] = `
 yield(file.to_s)
 
 def method_with_yields

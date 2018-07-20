@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`empty_array.rb - ruby-verify: empty_array.rb 1`] = `
+exports[`empty_array.rb 1`] = `
 empty_array = []
 empty_array
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -9,7 +9,7 @@ empty_array
 
 `;
 
-exports[`number_array.rb - ruby-verify: number_array.rb 1`] = `
+exports[`number_array.rb 1`] = `
 numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 numbers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -18,7 +18,7 @@ numbers
 
 `;
 
-exports[`string_array.rb - ruby-verify: string_array.rb 1`] = `
+exports[`string_array.rb 1`] = `
 def strings
   %w(
     a
@@ -37,7 +37,7 @@ strings
 
 `;
 
-exports[`symbol_array.rb - ruby-verify: symbol_array.rb 1`] = `
+exports[`symbol_array.rb 1`] = `
 def symbols
   %i(
     a

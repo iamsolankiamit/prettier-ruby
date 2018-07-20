@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`BEGIN.rb - ruby-verify: BEGIN.rb 1`] = `
+exports[`BEGIN.rb 1`] = `
 BEGIN { 1; 2 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 BEGIN {

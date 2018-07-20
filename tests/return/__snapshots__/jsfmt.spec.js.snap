@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`return.rb - ruby-verify: return.rb 1`] = `
+exports[`return.rb 1`] = `
 if x == true
   return true
 elsif x == false

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`unless.rb - ruby-verify: unless.rb 1`] = `
+exports[`unless.rb 1`] = `
 unless false
   puts "this is true"
 end
@@ -9,7 +9,7 @@ puts 'this is true' unless false
 
 `;
 
-exports[`unless_2.rb - ruby-verify: unless_2.rb 1`] = `
+exports[`unless_2.rb 1`] = `
 unless false
   puts "this is true, and a very long line so that it doesn't collapse into a single line unless statement."
 end
@@ -20,7 +20,7 @@ end
 
 `;
 
-exports[`unless_3.rb - ruby-verify: unless_3.rb 1`] = `
+exports[`unless_3.rb 1`] = `
 (0..100).each do |i|
   next unless i % 2 == 0
 
@@ -34,7 +34,7 @@ end
 
 `;
 
-exports[`unless_4.rb - ruby-verify: unless_4.rb 1`] = `
+exports[`unless_4.rb 1`] = `
 unless false
   puts "this is true"
   puts "Multi line unless"

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`until.rb - ruby-verify: until.rb 1`] = `
+exports[`until.rb 1`] = `
 until x > 5
   do_something
   do_something_else
@@ -13,7 +13,7 @@ end
 
 `;
 
-exports[`until_2.rb - ruby-verify: until_2.rb 1`] = `
+exports[`until_2.rb 1`] = `
 do_something until some_condition
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 do_something until some_condition

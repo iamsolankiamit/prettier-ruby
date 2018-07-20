@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`defs.rb - ruby-verify: defs.rb 1`] = `
+exports[`defs.rb 1`] = `
 def self.root_level=(level)
   @root_level = level
 end

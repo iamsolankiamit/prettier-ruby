@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`when.rb - ruby-verify: when.rb 1`] = `
+exports[`when.rb 1`] = `
 case
 when song.name == 'Misty'
   puts 'Not again!'
@@ -25,7 +25,7 @@ end
 
 `;
 
-exports[`when_2.rb - ruby-verify: when_2.rb 1`] = `
+exports[`when_2.rb 1`] = `
 kind =
   case year
   when 1850..1889 then 'Blues'

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`call_1.rb - ruby-verify: call_1.rb 1`] = `
+exports[`call_1.rb 1`] = `
 puts 123
 ['small', 'medium', 'large'].include? params[:size]
 ['small', 'medium', 'large'].any?

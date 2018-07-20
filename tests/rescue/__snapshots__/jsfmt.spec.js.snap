@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`rescue.rb - ruby-verify: rescue.rb 1`] = `
+exports[`rescue.rb 1`] = `
 def do_something!
   potential_explosion!
 rescue CustomError

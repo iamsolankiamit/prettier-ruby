@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`while.rb - ruby-verify: while.rb 1`] = `
+exports[`while.rb 1`] = `
 while x > 5
   do_something
   do_something_else
@@ -13,7 +13,7 @@ end
 
 `;
 
-exports[`while_2.rb - ruby-verify: while_2.rb 1`] = `
+exports[`while_2.rb 1`] = `
 do_something while some_condition
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 do_something while some_condition

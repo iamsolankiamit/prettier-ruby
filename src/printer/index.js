@@ -929,7 +929,7 @@ function genericPrint(path, options, print) {
       if (n.args) {
         parts.push(group(concat([" do ", "|", path.call(print, "args"), "|"])));
       } else {
-        parts.push(" do ")
+        parts.push(" do ");
       }
 
       parts.push(

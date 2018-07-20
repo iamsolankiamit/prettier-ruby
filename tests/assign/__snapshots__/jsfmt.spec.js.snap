@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`assign.rb - ruby-verify: assign.rb 1`] = `
+exports[`assign.rb 1`] = `
 a = b
 a ||= {}
 a ||= {

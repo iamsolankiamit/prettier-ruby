@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`block.rb - ruby-verify: block.rb 1`] = `
+exports[`block.rb 1`] = `
 example.map! do |o|
   location = Module::Submodule::Class.new(varia,
                                        obj['x']['y'],
@@ -17,13 +17,96 @@ end
 
 `;
 
-exports[`block_1.rb - ruby-verify: block_1.rb 1`] = `
+exports[`block_1.rb 1`] = `
 very_long_function_name_here(long_arg_name, another_arg, file) do |file|
   files = file
 end
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 very_long_function_name_here(long_arg_name, another_arg, file) do |file|
   files = file
+end
+
+`;
+
+exports[`block_params.rb 1`] = `
+func { }
+func {
+
+}
+func { puts "hello world" }
+func { |x| puts x }
+func { |x, y| puts x, y }
+func { |x, y, z| puts x, y, z }
+func { |x, y, z|
+  puts x, y, z
+}
+
+func do; end
+func do
+
+end
+func do
+  puts "hello world"
+end
+
+func do |x|
+  puts x
+end
+
+func do |x, y|
+  puts x, y
+end
+
+func do |x, y, z|
+  puts x, y, z
+end
+
+def index
+  @people = Person.find(:all)
+
+  respond_to do |format|
+    format.html
+    format.js
+    format.xml do
+      render :xml => @people.to_xml
+    end
+  end
+end
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+func {  }
+func {  }
+func { puts 'hello world' }
+func { |x| puts x }
+func { |x, y| puts x, y }
+func { |x, y, z| puts x, y, z }
+func { |x, y, z| puts x, y, z }
+func do
+
+end
+func do
+
+end
+func do
+  puts 'hello world'
+end
+func do |x|
+  puts x
+end
+func do |x, y|
+  puts x, y
+end
+func do |x, y, z|
+  puts x, y, z
+end
+def index
+  @people = Person.find(:all)
+  respond_to do |format|
+    format.html
+    format.js
+    format.xml do
+      render(:xml => @people.to_xml)
+    end
+  end
 end
 
 `;
