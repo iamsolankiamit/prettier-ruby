@@ -103,6 +103,16 @@ class Processor
     { ast_type: type, target: target, value: value }
   end
 
+  def visit_opassign(node) 
+    type, target, op, value = node
+    target = visit(target)
+    remove_space
+    op = visit(op)
+    remove_space
+    value = visit(value)
+    { ast_type: type, target: target, op: op, value: value }
+  end
+
   def visit_assign_value(node)
     remove_space_or_newline
     visit(node)
@@ -174,19 +184,22 @@ class Processor
     when :assign
       visit_assign(node)
     when :opassign
-      type, target, op, value = node
-      { ast_type: type, target: visit(target), op: visit(op), value: visit(value) }
+      visit_opassign(node)
     when :var_field
       body = visit(node[1])
       { ast_type: 'var_field', body: body }
     when :@gvar
       # [:@gvar, "$foo", [1, 0]]
       type, value = node
-      { ast_type: type, value: value }
+      take_token(:on_gvar)
+      remove_space
+      { ast_type: type, value: value, newline: line?, hardline: hardline? }
     when :@op
       # [:@op, "[]=", [1, 1]]
       type, value = node
-      { ast_type: type, value: value }
+      take_token(:on_op)
+      remove_space
+      { ast_type: type, value: value, newline: line?, hardline: hardline? }
     when :@int
       # [:@int, "123", [1, 0]]
       type, int = node
@@ -219,14 +232,17 @@ class Processor
     when :@const
       # [:@const, "Constant", [1, 0]]
       type, value = node
+      take_token(:on_const)
       { ast_type: type, value: value }
     when :@ivar
       # [:@ivar, "@foo", [1, 0]]
       type, value = node
+      take_token(:on_ivar)
       { ast_type: type, value: value }
     when :@cvar
       # [:@cvar, "@@foo", [1, 0]]
       type, value = node
+      take_token(:on_cvar)
       { ast_type: type, value: value }
     when :@const
       # [:@const, "FOO", [1, 0]]
@@ -316,12 +332,16 @@ class Processor
       visit_path(node)
     when :hash
       type, elements = node
+      remove_space_or_newline
+      take_token(:on_lbrace)
       if elements
         elements = visit_exps(elements[1])
       else
         elements = []
       end
-      { ast_type: type, elements: elements }
+      take_token(:on_rbrace)
+      remove_space
+      { ast_type: type, elements: elements, newline: line?, hardline: hardline? }
     when :@label
       # [:@label, "foo:", [1, 3]]
       { ast_type: '@label', value: node[1] }
@@ -336,7 +356,14 @@ class Processor
       visit_string_literal(node)
     when :string_content
       # [:string_content, exp]
-      visit_exps node[1..-1]
+      _, *exps = node
+      visit_exps(exps)
+    when :string_embexpr
+      # [:string_content, exps]
+      _, exps = node
+      take_token(:on_embexpr_beg)
+      visit_exps(exps)
+      take_token(:on_embexpr_end)
     when :symbol_literal
       visit_symbol_literal(node)
     when :symbol
@@ -487,7 +514,12 @@ class Processor
   def visit_alias(node)
     # [:alias, from, to]
     type, from, to = node
-    { ast_type: type, from: visit(from), to: visit(to) }
+    take_token(:on_kw)
+    remove_space
+    from = visit(from)
+    remove_space
+    to = visit(to)
+    { ast_type: type, from: from, to: to }
   end
 
   def visit_BEGIN(node)
@@ -810,13 +842,16 @@ class Processor
     # A symbol literal not necessarily begins with `:`.
     # For example, an `alias foo bar` will treat `foo`
     # a as symbol_literal but without a `:symbol` child.
-    { ast_type: node[0], body: visit(node[1]) }
+    type, symb = node
+    symb = visit(symb)
+    { ast_type: type, body: symb }
   end
 
   def visit_symbol(node)
     # :foo
     #
     # [:symbol, [:@ident, "foo", [1, 1]]]
+    take_token(:on_symbeg)
     { ast_type: node[0], symbol: visit(node[1]) }
   end
 
@@ -956,7 +991,12 @@ class Processor
   def visit_string_literal(node)
     # [:string_literal, [:string_content, exps]]
     type, string_content = node
-    { ast_type: type, string_content: visit(string_content) }
+    is_single_quote = current_token_value === "'"
+    take_token(:on_tstring_beg)
+    string_content = visit(string_content)
+    take_token(:on_tstring_end)
+    remove_space
+    { ast_type: type, string_content: string_content, is_single_quote: is_single_quote, newline: line?, hardline: hardline? }
   end
 
   def visit_unary(node)

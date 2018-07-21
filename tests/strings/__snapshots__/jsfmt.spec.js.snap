@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`strings.rb 1`] = `
+'hello world'
+"hello world"
+
+'#{not interpolated}'
+"start#{interpolated}end"
+
+'hello\\nworld1'
+"hello\\nworld2"
+
+'\\n'
+"\\\\n"
+"\\n"
+
+'"'
+"'"
+
+'\\\\'
+"\\\\"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+'hello world'
+'hello world'
+'#{not interpolated}'
+'start'
+'hello\\nworld1'
+'hello\\nworld2'
+'\\n'
+'\\\\n'
+'\\n'
+'"'
+"'"
+'\\\\'
+'\\\\'
+
+`;
