@@ -20,9 +20,10 @@ function parseText(text) {
 function parse(text) {
   const executionResult = parseText(text);
   const res = executionResult.stdout.toString();
-  const { tokens, sexp, json } = JSON.parse(res);
+  const { alltokens, tokens, sexp, json } = JSON.parse(res);
 
   if (process.env.DEBUG) {
+    console.log("all-tokens:\n", alltokens);
     console.log("tokens:\n", tokens);
     console.log("sexp:\n", sexp);
     console.log("json AST:\n", JSON.stringify(json, null, 4));

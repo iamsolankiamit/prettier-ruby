@@ -3,24 +3,158 @@ require 'json'
 require 'pp'
 
 class Processor
-  attr_reader :json, :sexp, :tokens
+  attr_reader :json, :sexp, :tokens, :alltokens
 
   def initialize(code)
     @json = []
     @code = code
-    @tokens = Ripper.lex(code).reverse!
+    @tokens = Ripper.lex(code)
+    @alltokens = Ripper.lex(code)
     @sexp = Ripper.sexp(code)
     @json = visit(@sexp)
     @json[:comments] = []
-    (token_line, _),  token = first_token
+    (token_line, _),  token = last_token
     last_token_is_END = token == :on___end__
     if last_token_is_END
       @json[:body] << { ast_type: "__END__", content: code.lines[token_line..-1] }
     end
   end
 
-  def first_token
-    !@tokens.empty? ? @tokens[0] : [[nil,nil],nil,nil]
+  def last_token
+    !@tokens.empty? ? @tokens[-1] : [[nil,nil],nil,nil]
+  end
+
+  def current_token
+    @tokens.first
+  end
+
+  def current_token_type
+    _, token_type = current_token
+    token_type
+  end
+  
+  def current_token_value
+    _, _, value = current_token
+    value
+  end
+
+  def next_token
+    token = @tokens.shift.first
+    token_pos, token_type = token
+    # while(token_type === :on_nl || token_type === :on_sp || token_type === :on_ignored_nl || token_type === :on_comment)
+    #   token = @tokens.shift.first
+    #   token_pos, token_type = token
+    # end
+    token
+  end
+
+  def take_token(token)
+    if(current_token_type === token)
+      next_token
+    else
+      # throw "Got token #{token}, expected #{current_token_type}, tokens: #{@tokens}"
+    end
+  end
+
+  def line?
+    current_token_type === :on_nl || current_token_type === :on_ignored_nl
+  end
+
+  def next_is_newline?
+    next_token = @tokens[1]
+    _, next_token_type = next_token
+    next_token_type === :on_nl || next_token_type === :on_ignored_nl
+  end
+
+  def hardline?
+    hardline = line? && next_is_newline?
+    while(line?)
+      next_token
+    end
+    hardline
+  end
+
+  def remove_space_or_newline
+    while(current_token_type === :on_sp || current_token_type === :on_nl || current_token_type === :on_ignored_nl)
+      next_token
+    end
+  end
+
+  def remove_space
+    while current_token_type === :on_sp 
+      next_token
+    end
+  end
+
+  def remove_token(operator)
+    if(operator === current_token_value)
+      next_token
+    else
+      # throw "expected operator #{current_token_value}, but got #{operator}"
+    end
+  end
+
+  def visit_assign(node)
+    type, target, value = node
+    target = visit(target)
+    remove_space
+    remove_token("=")
+    value = visit_assign_value(value)
+    { ast_type: type, target: target, value: value }
+  end
+
+  def visit_assign_value(node)
+    remove_space_or_newline
+    visit(node)
+  end
+
+  def visit_array(node)
+    type, body = node
+    array_type = "normal"
+    remove_space_or_newline
+    if current_token_type === :on_qwords_beg
+      take_token(:on_qwords_beg)
+      array_type = "words"
+      body = visit_q_or_i_elements(body)
+    elsif current_token_type === :on_qsymbols_beg
+      take_token(:on_qsymbols_beg)
+      array_type = "symbols"
+      body = visit_q_or_i_elements(body)
+    else
+      body = visit_literal_elements(body)
+    end
+    { ast_type: type, body: body, newline: line?, hardline: hardline?, array_type: array_type }
+  end
+
+  def visit_literal_elements(nodes)
+    remove_token("[")
+    remove_space_or_newline
+    exprs = []
+    unless nodes.nil?
+      nodes.each do |exp|
+        type, _ = exp
+        exprs << visit(exp) unless type == :void_stmt
+        remove_space_or_newline
+        remove_token(",") if current_token_type === :on_comma
+        remove_space_or_newline
+      end
+    end
+    remove_token("]")
+    exprs
+  end
+
+  def visit_q_or_i_elements(nodes)
+    remove_space_or_newline
+    exprs = []
+      nodes.each do |exp|
+        type, _ = exp
+        exprs << visit(exp) unless type == :void_stmt
+        remove_space_or_newline
+        take_token(:on_words_sep)
+        take_token(:on_tstring_end) if current_token_type === :on_tstring_end
+        remove_space_or_newline
+      end
+    exprs
   end
 
   def visit(node)
@@ -38,8 +172,7 @@ class Processor
     when :class
       visit_class(node)
     when :assign
-      type, target, value = node
-      { ast_type: type, target: visit(target), value: visit(value) }
+      visit_assign(node)
     when :opassign
       type, target, op, value = node
       { ast_type: type, target: visit(target), op: visit(op), value: visit(value) }
@@ -57,6 +190,7 @@ class Processor
     when :@int
       # [:@int, "123", [1, 0]]
       type, int = node
+      remove_token(int)
       { ast_type: type, value: int }
     when :@float
       # [:@float, "123.45", [1, 0]]
@@ -75,11 +209,13 @@ class Processor
       type, char = node
       { ast_type: type, value: char }
     when :@ident
-      { ast_type: '@ident', value: node[1] }
+      take_token(:on_ident)
+      { ast_type: '@ident', value: node[1], newline: line?, hardline: hardline? }
     when :@kw
+      take_token(:on_kw)
       # [:@kw, "nil", [1, 0]]
       type, value = node
-      { ast_type: type, value: value }
+      { ast_type: type, value: value, newline: line?, hardline: hardline? }
     when :@const
       # [:@const, "Constant", [1, 0]]
       type, value = node
@@ -102,12 +238,14 @@ class Processor
       { ast_type: type, value: visit(value) }
     when :top_const_ref
       # [:top_const_ref, [:@const, ...]]
+      remove_space_or_newline
       type, value = node
       { ast_type: type, value: visit(value) }
     when :void_stmt
       # Empty statement
       #
       # [:void_stmt]
+      remove_space_or_newline
       { ast_type: "void_stmt" }
     when :dot2
       visit_range(node)
@@ -128,9 +266,7 @@ class Processor
     when :aref_field
       visit_array_field(node)
     when :array
-      type, body = node
-
-      { ast_type: type, body: (body.nil? ? nil : visit_exps(body)) }
+      visit_array(node)
     when :method_add_block
       { ast_type: 'method_add_block', call: visit(node[1]), block: visit(node[2]) }
     when :method_add_arg
@@ -253,7 +389,8 @@ class Processor
       { ast_type: type, bodystmt: visit_exps(body) }
     when :@tstring_content
       type, content = node
-      { ast_type: type, content: content }
+      take_token(:on_tstring_content)
+      { ast_type: type, content: content.strip }
     when :else
       type, else_body = node
       { ast_type: type, else_body: visit_exps(else_body) }
@@ -510,11 +647,13 @@ class Processor
 
   def visit_def(node)
     type, name, params, body = node
+    take_token(:on_kw)
     if params[0] == :paren
       params = visit(params[1])
     else
       params = visit(params)
     end
+    remove_space_or_newline
     { ast_type: type, name: visit(name), params: params, bodystmt: visit(body) }
   end
 
@@ -554,6 +693,8 @@ class Processor
     rescue_body = visit(rescue_body) if rescue_body
     else_body = visit(else_body) if else_body
     ensure_body = visit(ensure_body) if ensure_body
+    take_token(:on_kw)
+    remove_space_or_newline
     { ast_type: type, body: body, rescue_body: rescue_body, else_body: else_body, ensure_body: ensure_body }
   end
 
@@ -864,7 +1005,8 @@ code = data.to_s
 processor = Processor.new(code)
 
 result = {}
-result[:tokens] = processor.tokens.reverse.pretty_inspect if ENV['DEBUG']
+result[:alltokens] = processor.alltokens.pretty_inspect if ENV['DEBUG']
+result[:tokens] = processor.tokens.pretty_inspect if ENV['DEBUG']
 result[:sexp] = processor.sexp.pretty_inspect if ENV['DEBUG']
 result[:json] = processor.json
 

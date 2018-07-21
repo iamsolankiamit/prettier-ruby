@@ -948,14 +948,33 @@ function genericPrint(path, options, print) {
       if (n.body === null) {
         return "[]";
       }
+      let parts = [];
+      const type = n.array_type;
+      switch (type) {
+        case "normal":
+          parts = group(
+            concat([
+              "[",
+              join(concat([", ", softline]), path.map(print, "body")),
+              "]"
+            ])
+          );
+          break;
 
-      return group(
-        concat([
-          "[",
-          join(concat([", ", softline]), path.map(print, "body")),
-          "]"
-        ])
-      );
+        case "words":
+          parts = group(
+            concat(["%w[", join(line, path.map(print, "body")), "]"])
+          );
+          break;
+
+        case "symbols":
+          parts = group(
+            concat(["%i[", join(line, path.map(print, "body")), "]"])
+          );
+          break;
+      }
+
+      return parts;
     }
 
     case "hash": {
