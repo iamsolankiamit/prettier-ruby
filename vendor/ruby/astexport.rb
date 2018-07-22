@@ -707,10 +707,16 @@ class Processor
     # [:assoc_new, key, value]
     type, key, value = node
 
-    symbol = key[0] == :symbol_literal
-    arrow = symbol || !(key[0] == :@label || key[0] == :dyna_symbol)
-
-    { ast_type: type, key: visit(key), value: visit(value), has_arrow: arrow }
+    symbol = key[0] == :symbol_literal  || key[0] == :dyna_symbol
+    arrow = symbol || !(key[0] == :@label)
+    key = visit(key)
+    remove_space
+    if arrow
+      remove_token("=>")
+      remove_space
+    end
+    value = visit(value)
+    { ast_type: type, key: key, value: value, has_arrow: arrow }
   end
 
   def visit_command(node)
@@ -866,19 +872,18 @@ class Processor
     # :"foo"
     #
     # [:dyna_symbol, exps]
-    _, exps = node
+    type, exps = node
 
-    # This is `"...":` as a hash key
-    # if current_token_kind == :on_tstring_beg
-    #   consume_token :on_tstring_beg
-    #   visit exps
-    #   consume_token :on_label_end
-    # else
-    #   consume_token :on_symbeg
-    #   visit_exps exps, with_lines: false
-    #   consume_token :on_tstring_end
-    # end
-    visit exps
+    if current_token_type == :on_tstring_beg
+      take_token(:on_tstring_beg)
+      exps = visit(exps)
+      take_token(:on_label_end)
+    else
+      take_token(:on_symbeg)
+      exps = visit_exps(exps)
+      take_token(:on_tstring_end)
+    end
+    {ast_type: type, value: exps}
   end
 
   def visit_if_mod(node)

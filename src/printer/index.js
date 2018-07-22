@@ -16,7 +16,7 @@ const align = docBuilders.align;
 const dedent = docBuilders.dedent;
 const ifBreak = docBuilders.ifBreak;
 
-function printRubyString(path, print, n, options) {
+function printRubyString(path, print, n, type, options) {
   const double = { quote: '"', regex: /"/g };
   const single = { quote: "'", regex: /'/g };
 
@@ -25,8 +25,8 @@ function printRubyString(path, print, n, options) {
 
   let shouldUseAlternateQuote = false;
   const isSingleQuote = n.is_single_quote;
-  const hasInterpolation = n.string_content.length > 1;
-  const emptyString = n.string_content.length === 0;
+  const hasInterpolation = n[type].length > 1;
+  const emptyString = n[type].length === 0;
   if (emptyString) {
     return concat([
       preferred.quote,
@@ -38,13 +38,13 @@ function printRubyString(path, print, n, options) {
   if (!isSingleQuote && hasInterpolation) {
     rawContent = concat([
       double.quote,
-      concat(path.map(print, "string_content")),
+      concat(path.map(print, type)),
       double.quote,
       n.hardline ? hardline : ""
     ]);
     return rawContent;
   }
-  rawContent = n.string_content[0].content;
+  rawContent = n[type][0].content;
   // If `rawContent` contains at least one of the quote preferred for enclosing
   // the string, we might want to enclose with the alternate quote instead, to
   // minimize the number of escaped quotes.
@@ -584,6 +584,10 @@ function genericPrint(path, options, print) {
       return concat([":", path.call(print, "symbol")]);
     }
 
+    case "dyna_symbol": {
+      return concat([":", printRubyString(path, print, n, "value", options)]);
+    }
+
     case "field": {
       const parts = [];
       parts.push(path.call(print, "receiver"));
@@ -825,9 +829,7 @@ function genericPrint(path, options, print) {
       return path.call(print, "regexp_end");
 
     case "string_literal": {
-      return printRubyString(path, print, n, options);
-
-      // return printRubyString(rawContent, options);
+      return printRubyString(path, print, n, "string_content", options);
     }
 
     case "@tstring_content": {

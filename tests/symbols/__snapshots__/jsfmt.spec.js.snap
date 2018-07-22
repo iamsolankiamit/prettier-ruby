@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`symbols.rb 1`] = `
+symbols = {
+  :"hello-world" => "helloWorld",
+  :"foo-bar-baz" => 20,
+  :"#dynamic-key-#{foo}" => 10
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+symbols = {
+  :'hello-world' => 'helloWorld',
+  :'foo-bar-baz' => 20,
+  :"#dynamic-key-#{foo}" => 10
+}
+
+`;
