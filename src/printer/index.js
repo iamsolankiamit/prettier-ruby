@@ -190,7 +190,7 @@ function genericPrint(path, options, print) {
     }
 
     case "@ident": {
-      return n.value;
+      return concat([n.value, n.hardline ? hardline : ""]);
     }
 
     case "var_field": {
@@ -214,7 +214,7 @@ function genericPrint(path, options, print) {
     case "@const":
     case "@gvar":
     case "@op": {
-      return path.call(print, "value");
+      return concat([path.call(print, "value"), n.hardline ? hardline : ""]);
     }
 
     case "__END__": {
@@ -504,7 +504,8 @@ function genericPrint(path, options, print) {
       const body = path.call(print, "args");
       let finalBody = group(concat(["(", body, ")"]));
       const name = n.name && path.call(print, "name");
-      if (keywords.hasOwnProperty(name)) {
+      const value = name && name.parts[0];
+      if (keywords.hasOwnProperty(value)) {
         finalBody = group(concat([" ", body]));
       }
       const parts = [];

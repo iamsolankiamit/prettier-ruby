@@ -689,6 +689,7 @@ class Processor
     if params[0] == :paren
       params = visit(params[1])
     else
+      remove_space
       params = visit(params)
     end
     remove_space_or_newline
@@ -717,8 +718,8 @@ class Processor
     #
     # [:command, name, args]
     type, name, args = node
-
     name = visit(name)
+    remove_space
     args = visit(args)
     { ast_type: type, name: name, args: args }
   end
@@ -796,7 +797,7 @@ class Processor
     label_params,
     double_star_param,
     blockarg = node
-
+    remove_space
     pre_rest_params = visit_exps(pre_rest_params) if pre_rest_params
     args_with_default = visit_args_with_default(args_with_default) if args_with_default
     rest_param = visit(rest_param[1]) if rest_param
