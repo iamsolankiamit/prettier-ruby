@@ -402,7 +402,7 @@ class Processor
       visit_if(node)
     when :elsif
       visit_if(node)
-    when :return
+    when :return, :return0
       visit_return(node)
     when :retry
       { ast_type: :retry }

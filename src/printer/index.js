@@ -859,6 +859,7 @@ function genericPrint(path, options, print) {
       return concat(["#{", concat(path.map(print, "interpolations")), "}"]);
     }
 
+    case "return0":
     case "return": {
       const value = path.call(print, "value");
       return group(concat(["return", value ? " " : "", value]));
