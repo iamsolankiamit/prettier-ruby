@@ -726,7 +726,7 @@ class Processor
     type, name, args = node
     name = visit(name)
     remove_space
-    args = visit(args)
+    args = args[0] === :args_add_block ? visit(args) : visit_exps(args)
     { ast_type: type, name: name, args: args }
   end
 

@@ -501,7 +501,10 @@ function genericPrint(path, options, print) {
     }
 
     case "command": {
-      const body = path.call(print, "args");
+      const body =
+        n.args && n.args.length
+          ? concat(path.map(print, "args"))
+          : path.call(print, "args");
       let finalBody = group(concat(["(", body, ")"]));
       const name = n.name && path.call(print, "name");
       const value = name && name.parts[0];

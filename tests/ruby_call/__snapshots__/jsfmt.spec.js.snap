@@ -17,3 +17,10 @@ params&.include? params[:size]
 greet('userName')
 
 `;
+
+exports[`call_2.rb 1`] = `
+puts Base64.decode64 base64
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+puts Base64.decode64 base64
+
+`;
