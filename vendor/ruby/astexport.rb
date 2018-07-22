@@ -360,10 +360,12 @@ class Processor
       visit_exps(exps)
     when :string_embexpr
       # [:string_content, exps]
-      _, exps = node
+      type, exps = node
+      
       take_token(:on_embexpr_beg)
-      visit_exps(exps)
+      exps = visit_exps(exps)
       take_token(:on_embexpr_end)
+      { ast_type: type, interpolations: exps }
     when :symbol_literal
       visit_symbol_literal(node)
     when :symbol

@@ -22,16 +22,21 @@ exports[`strings.rb 1`] = `
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 'hello world'
 'hello world'
+
 '#{not interpolated}'
-'start'
+"start#{interpolated}end"
+
 'hello\\nworld1'
-'hello\\nworld2'
+"hello\\nworld2"
+
 '\\n'
-'\\\\n'
-'\\n'
+"\\\\n"
+"\\n"
+
 '"'
 "'"
+
 '\\\\'
-'\\\\'
+"\\\\"
 
 `;

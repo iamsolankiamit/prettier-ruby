@@ -16,7 +16,7 @@ const align = docBuilders.align;
 const dedent = docBuilders.dedent;
 const ifBreak = docBuilders.ifBreak;
 
-function printRubyString(rawContent, options) {
+function printRubyString(path, print, n, options) {
   const double = { quote: '"', regex: /"/g };
   const single = { quote: "'", regex: /'/g };
 
@@ -24,7 +24,19 @@ function printRubyString(rawContent, options) {
   const alternate = preferred === single ? double : single;
 
   let shouldUseAlternateQuote = false;
-
+  const isSingleQuote = n.is_single_quote;
+  const hasInterpolation = n.string_content.length > 1;
+  let rawContent;
+  if (!isSingleQuote && hasInterpolation) {
+    rawContent = concat([
+      double.quote,
+      concat(path.map(print, "string_content")),
+      double.quote,
+      n.hardline ? hardline : ""
+    ]);
+    return rawContent;
+  }
+  rawContent = n.string_content[0].content;
   // If `rawContent` contains at least one of the quote preferred for enclosing
   // the string, we might want to enclose with the alternate quote instead, to
   // minimize the number of escaped quotes.
@@ -40,15 +52,28 @@ function printRubyString(rawContent, options) {
     shouldUseAlternateQuote = numPreferredQuotes > numAlternateQuotes;
   }
 
-  const enclosingQuote = shouldUseAlternateQuote
+  const rubyRegex = /(\\")|(\\\\)|(\\a)|(\\b)|(\\r)|(\\n)|(\\s)|(\\t)|(\\u[0000-FFFF]{4})|(\\0[00-88]{2})/g;
+
+  const stringHasEscapeChars = rubyRegex.test(rawContent);
+  // console.log("stringHasEscapeChars: ", rawContent, stringHasEscapeChars);
+
+  let enclosingQuote = shouldUseAlternateQuote
     ? alternate.quote
     : preferred.quote;
+
+  if (!isSingleQuote && stringHasEscapeChars) {
+    enclosingQuote = double.quote;
+  }
 
   // It might sound unnecessary to use `makeString` even if the string already
   // is enclosed with `enclosingQuote`, but it isn't. The string could contain
   // unnecessary escapes (such as in `"\'"`). Always using `makeString` makes
   // sure that we consistently output the minimum amount of escaped quotes.
-  return util.makeString(rawContent, enclosingQuote);
+  let string = util.makeString(rawContent, enclosingQuote);
+  if (n.hardline) {
+    string = concat([string, hardline]);
+  }
+  return string;
 }
 
 function printBody(path, print) {
@@ -791,13 +816,17 @@ function genericPrint(path, options, print) {
       return path.call(print, "regexp_end");
 
     case "string_literal": {
-      const rawContent = n.string_content[0].content;
+      return printRubyString(path, print, n, options);
 
-      return printRubyString(rawContent, options);
+      // return printRubyString(rawContent, options);
     }
 
     case "@tstring_content": {
       return path.call(print, "content");
+    }
+
+    case "string_embexpr": {
+      return concat(["#{", concat(path.map(print, "interpolations")), "}"]);
     }
 
     case "return": {
