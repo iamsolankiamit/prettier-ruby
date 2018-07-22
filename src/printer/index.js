@@ -26,6 +26,14 @@ function printRubyString(path, print, n, options) {
   let shouldUseAlternateQuote = false;
   const isSingleQuote = n.is_single_quote;
   const hasInterpolation = n.string_content.length > 1;
+  const emptyString = n.string_content.length === 0;
+  if (emptyString) {
+    return concat([
+      preferred.quote,
+      preferred.quote,
+      n.hardline ? hardline : ""
+    ]);
+  }
   let rawContent;
   if (!isSingleQuote && hasInterpolation) {
     rawContent = concat([
