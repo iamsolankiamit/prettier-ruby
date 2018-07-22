@@ -1004,8 +1004,9 @@ class Processor
     # [:string_literal, [:string_content, exps]]
     type, string_content = node
     is_single_quote = current_token_value === "'"
-    take_token(:on_tstring_beg)
-    string_content = visit(string_content)
+    take_token(:on_tstring_beg) if type == :string_literal
+    take_token(:on_backtick) if type == :xstring_literal
+    string_content = type == :xstring_literal ? visit_exps(string_content) : visit(string_content)
     take_token(:on_tstring_end)
     remove_space
     { ast_type: type, string_content: string_content, is_single_quote: is_single_quote, newline: line?, hardline: hardline? }

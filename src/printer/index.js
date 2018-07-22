@@ -16,9 +16,10 @@ const align = docBuilders.align;
 const dedent = docBuilders.dedent;
 const ifBreak = docBuilders.ifBreak;
 
-function printRubyString(path, print, n, type, options) {
+function printRubyString(path, print, n, type, options, isXString) {
   const double = { quote: '"', regex: /"/g };
   const single = { quote: "'", regex: /'/g };
+  const xString = { quote: "`" };
 
   const preferred = options.singleQuote ? single : double;
   const alternate = preferred === single ? double : single;
@@ -29,8 +30,8 @@ function printRubyString(path, print, n, type, options) {
   const emptyString = n[type].length === 0;
   if (emptyString) {
     return concat([
-      preferred.quote,
-      preferred.quote,
+      isXString ? xString.quote : preferred.quote,
+      isXString ? xString.quote : preferred.quote,
       n.hardline ? hardline : ""
     ]);
   }
@@ -45,6 +46,14 @@ function printRubyString(path, print, n, type, options) {
     return rawContent;
   }
   rawContent = n[type][0].content;
+  if (isXString) {
+    return concat([
+      xString.quote,
+      concat(path.map(print, type)),
+      xString.quote,
+      n.hardline ? hardline : ""
+    ]);
+  }
   // If `rawContent` contains at least one of the quote preferred for enclosing
   // the string, we might want to enclose with the alternate quote instead, to
   // minimize the number of escaped quotes.
@@ -830,9 +839,16 @@ function genericPrint(path, options, print) {
 
     case "@regexp_end":
       return path.call(print, "regexp_end");
-
+    case "xstring_literal":
     case "string_literal": {
-      return printRubyString(path, print, n, "string_content", options);
+      return printRubyString(
+        path,
+        print,
+        n,
+        "string_content",
+        options,
+        n.ast_type === "xstring_literal"
+      );
     }
 
     case "@tstring_content": {

@@ -1,0 +1,2 @@
+`whoami`
+%x{ ruby --version }
