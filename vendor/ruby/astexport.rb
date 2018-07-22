@@ -160,7 +160,6 @@ class Processor
         type, _ = exp
         exprs << visit(exp) unless type == :void_stmt
         remove_space_or_newline
-        take_token(:on_words_sep)
         take_token(:on_tstring_end) if current_token_type === :on_tstring_end
         remove_space_or_newline
       end
@@ -419,7 +418,12 @@ class Processor
     when :@tstring_content
       type, content = node
       take_token(:on_tstring_content)
-      { ast_type: type, content: content.strip }
+      if current_token_type == :on_words_sep
+        take_token(:on_words_sep)
+        content = content.strip
+      end
+
+      { ast_type: type, content: content }
     when :else
       type, else_body = node
       { ast_type: type, else_body: visit_exps(else_body) }
