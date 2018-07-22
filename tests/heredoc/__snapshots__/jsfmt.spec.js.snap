@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`heredoc.rb 1`] = `
+def sql
+  <<-SQL
+    SELECT *
+    FROM foo
+  SQL
+end
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def sql
+  <<-SQL
+    SELECT *
+    FROM foo
+  SQL
+end
+
+`;

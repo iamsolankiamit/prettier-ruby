@@ -28,6 +28,15 @@ function printRubyString(path, print, n, type, options, isXString) {
   const isSingleQuote = n.is_single_quote;
   const hasInterpolation = n[type].length > 1;
   const emptyString = n[type].length === 0;
+  if (n.is_here_doc) {
+    const hereDocEnd = n.here_doc_end.replace("\n", "");
+    return concat([
+      n.here_doc_type,
+      n.here_doc_newline ? dedent(hardline) : "",
+      group(join(hardline, path.map(print, type))),
+      hereDocEnd
+    ]);
+  }
   if (emptyString) {
     return concat([
       isXString ? xString.quote : preferred.quote,

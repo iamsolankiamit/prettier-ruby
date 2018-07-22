@@ -331,8 +331,9 @@ class Processor
       visit_path(node)
     when :hash
       type, elements = node
-      remove_space_or_newline
+      remove_space
       take_token(:on_lbrace)
+      remove_space_or_newline
       if elements
         elements = visit_exps(elements[1])
       else
@@ -716,6 +717,8 @@ class Processor
       remove_space
     end
     value = visit(value)
+    take_token(:on_comma) if current_token_type == :on_comma
+    remove_space_or_newline
     { ast_type: type, key: key, value: value, has_arrow: arrow }
   end
 
@@ -1003,13 +1006,27 @@ class Processor
   def visit_string_literal(node)
     # [:string_literal, [:string_content, exps]]
     type, string_content = node
+    remove_space_or_newline
     is_single_quote = current_token_value === "'"
+    isHereDoc = current_token_type == :on_heredoc_beg
+    hereDocType = current_token_value if isHereDoc
+    take_token(:on_heredoc_beg) if isHereDoc
+    here_doc_newline = line? if isHereDoc
+    remove_space_or_newline
     take_token(:on_tstring_beg) if type == :string_literal
     take_token(:on_backtick) if type == :xstring_literal
     string_content = type == :xstring_literal ? visit_exps(string_content) : visit(string_content)
+    hereDocEnd = current_token_value if isHereDoc
     take_token(:on_tstring_end)
     remove_space
-    { ast_type: type, string_content: string_content, is_single_quote: is_single_quote, newline: line?, hardline: hardline? }
+    json = { ast_type: type, string_content: string_content, is_single_quote: is_single_quote, newline: line?, hardline: hardline? }
+    if(isHereDoc) 
+      json[:is_here_doc] = true
+      json[:here_doc_newline] = here_doc_newline
+      json[:here_doc_type] = hereDocType
+      json[:here_doc_end] = hereDocEnd
+    end
+    json
   end
 
   def visit_unary(node)
