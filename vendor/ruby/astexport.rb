@@ -11,13 +11,14 @@ class Processor
     @tokens = Ripper.lex(code)
     @alltokens = Ripper.lex(code)
     @sexp = Ripper.sexp(code)
+    @comments = []
     @json = visit(@sexp)
-    @json[:comments] = []
     (token_line, _),  token = last_token
     last_token_is_END = token == :on___end__
     if last_token_is_END
       @json[:body] << { ast_type: "__END__", content: code.lines[token_line..-1] }
     end
+    @json[:comments] = @comments
   end
 
   def last_token
@@ -52,7 +53,7 @@ class Processor
     if(current_token_type === token)
       next_token
     else
-      # throw "Got token #{token}, expected #{current_token_type}, tokens: #{@tokens}"
+      throw "Got token #{token}, expected #{current_token_type}, tokens: #{@tokens}"
     end
   end
 
@@ -75,7 +76,13 @@ class Processor
   end
 
   def remove_space_or_newline
-    while(current_token_type === :on_sp || current_token_type === :on_nl || current_token_type === :on_ignored_nl)
+    while(current_token_type === :on_sp || current_token_type === :on_nl || current_token_type === :on_ignored_nl || current_token_type === :on_comment)
+      if(current_token_type === :on_comment)
+        (line, column), type, value = current_token
+        # throw "#{line}, #{column}, #{type}, #{value}"
+        v = { ast_type: "comment", start: line, end: column,  value: value }
+        @comments.push v
+      end
       next_token
     end
   end
@@ -90,7 +97,7 @@ class Processor
     if(operator === current_token_value)
       next_token
     else
-      # throw "expected operator #{current_token_value}, but got #{operator}"
+      throw "expected operator #{current_token_value}, but got #{operator}"
     end
   end
 
@@ -526,7 +533,9 @@ class Processor
     from = visit(from)
     remove_space
     to = visit(to)
-    { ast_type: type, from: from, to: to }
+    hardline = hardline?
+    remove_space_or_newline
+    { ast_type: type, from: from, to: to, hardline: hardline }
   end
 
   def visit_BEGIN(node)
