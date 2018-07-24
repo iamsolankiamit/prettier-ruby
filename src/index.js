@@ -102,8 +102,20 @@ function printComment(commentPath) {
   const comment = commentPath.getValue();
 
   switch (comment.ast_type) {
-    case "comment":
-      return comment.value;
+    case "comment": {
+      const hasNewLine = comment.value.lastIndexOf("\n");
+      let value = comment.value;
+      const hasSpaceAfterHash = value.charAt(1) === " ";
+      if (hasNewLine) {
+        value = value.slice(0, hasNewLine);
+      }
+
+      if (!hasSpaceAfterHash) {
+        value = "# " + value.slice(1, value.length);
+      }
+
+      return value;
+    }
     default:
       throw new Error("Not a comment: " + JSON.stringify(comment));
   }

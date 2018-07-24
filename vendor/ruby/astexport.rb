@@ -9,7 +9,24 @@ class Processor
     @json = []
     @code = code
     @tokens = Ripper.lex(code)
-    @alltokens = Ripper.lex(code)
+    total = 0
+    currentLine = 0
+    lastCol = 0
+    t = @tokens.map do |n|
+      (line, col), _, value = n
+      if currentLine < line
+        total = lastCol
+        currentLine = line
+      end
+      start = total + col
+      n.push start
+      last = start + value.length
+      lastCol = last
+      n.push last
+      n
+    end
+    @alltokens = t.map { |t1| t1  }
+    @tokens = t
     @sexp = Ripper.sexp(code)
     @comments = []
     @json = visit(@sexp)
@@ -53,7 +70,7 @@ class Processor
     if(current_token_type === token)
       next_token
     else
-      throw "Got token #{token}, expected #{current_token_type}, tokens: #{@tokens}"
+      # throw "Got token #{token}, expected #{current_token_type}, tokens: #{@tokens}"
     end
   end
 
@@ -68,21 +85,27 @@ class Processor
   end
 
   def hardline?
-    hardline = line? && next_is_newline?
+    while( current_token_type === :on_nl)
+      next_token
+    end
+    hardline = current_token_type === :on_ignored_nl
     while(line?)
       next_token
     end
     hardline
   end
 
+  def take_comment
+    while(current_token_type === :on_comment)
+      (line, column), type, value, start, sEnd = current_token
+      v = { ast_type: "comment", start: start, end: sEnd, loc: {start: {line: line, column: column}, end: {line: line, column: value.length}}, value: value }
+      @comments.push v
+      next_token
+    end
+  end
+
   def remove_space_or_newline
-    while(current_token_type === :on_sp || current_token_type === :on_nl || current_token_type === :on_ignored_nl || current_token_type === :on_comment)
-      if(current_token_type === :on_comment)
-        (line, column), type, value = current_token
-        # throw "#{line}, #{column}, #{type}, #{value}"
-        v = { ast_type: "comment", start: line, end: column,  value: value }
-        @comments.push v
-      end
+    while(current_token_type === :on_sp || current_token_type === :on_nl || current_token_type === :on_ignored_nl)
       next_token
     end
   end
@@ -97,7 +120,7 @@ class Processor
     if(operator === current_token_value)
       next_token
     else
-      throw "expected operator #{current_token_value}, but got #{operator}"
+      # throw "expected operator #{current_token_value}, but got #{operator}"
     end
   end
 
@@ -199,13 +222,13 @@ class Processor
       type, value = node
       take_token(:on_gvar)
       remove_space
-      { ast_type: type, value: value, newline: line?, hardline: hardline? }
+      { ast_type: type, value: value }
     when :@op
       # [:@op, "[]=", [1, 1]]
       type, value = node
       take_token(:on_op)
       remove_space
-      { ast_type: type, value: value, newline: line?, hardline: hardline? }
+      { ast_type: type, value: value }
     when :@int
       # [:@int, "123", [1, 0]]
       type, int = node
@@ -229,12 +252,12 @@ class Processor
       { ast_type: type, value: char }
     when :@ident
       take_token(:on_ident)
-      { ast_type: '@ident', value: node[1], newline: line?, hardline: hardline? }
+      { ast_type: '@ident', value: node[1] }
     when :@kw
       take_token(:on_kw)
       # [:@kw, "nil", [1, 0]]
       type, value = node
-      { ast_type: type, value: value, newline: line?, hardline: hardline? }
+      { ast_type: type, value: value }
     when :@const
       # [:@const, "Constant", [1, 0]]
       type, value = node
@@ -528,14 +551,17 @@ class Processor
   def visit_alias(node)
     # [:alias, from, to]
     type, from, to = node
+    (startLine, startColumn), _, _, start = current_token
     take_token(:on_kw)
     remove_space
     from = visit(from)
     remove_space
     to = visit(to)
+    remove_space
+    (endLine, endColumn), _, _, _, sEnd = current_token
+    take_comment
     hardline = hardline?
-    remove_space_or_newline
-    { ast_type: type, from: from, to: to, hardline: hardline }
+    { ast_type: type, from: from, to: to, hardline: hardline, start: start, end: sEnd,  loc: {start: {line: startLine, column: startColumn}, end: { line: endLine, column: endColumn}} }
   end
 
   def visit_BEGIN(node)

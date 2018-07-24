@@ -208,7 +208,7 @@ function genericPrint(path, options, print) {
     }
 
     case "@ident": {
-      return concat([n.value, n.hardline ? hardline : ""]);
+      return path.call(print, "value");
     }
 
     case "var_field": {
@@ -525,7 +525,7 @@ function genericPrint(path, options, print) {
           : path.call(print, "args");
       let finalBody = group(concat(["(", body, ")"]));
       const name = n.name && path.call(print, "name");
-      const value = name && name.parts[0];
+      const value = name;
       if (keywords.hasOwnProperty(value)) {
         finalBody = group(concat([" ", body]));
       }
@@ -602,7 +602,7 @@ function genericPrint(path, options, print) {
     }
 
     case "symbol": {
-      return concat([":", path.call(print, "symbol")]);
+      return group(concat([":", path.call(print, "symbol")]));
     }
 
     case "dyna_symbol": {
@@ -651,7 +651,8 @@ function genericPrint(path, options, print) {
         " ",
         path.call(print, "from"),
         " ",
-        path.call(print, "to")
+        path.call(print, "to"),
+        n.hardline ? hardline : ""
       ]);
     }
 
