@@ -714,13 +714,13 @@ function genericPrint(path, options, print) {
       const targetParts = [];
       targetParts.push(path.call(print, "target"), line, "=");
       let value = group(path.call(print, "value"));
-      if (n.value.ast_type !== "hash") {
-        value = indent(group(concat([line, value])));
-      } else {
+      if (n.value.ast_type === "hash" || n.value.ast_type === "array") {
         targetParts.push(line);
+      } else {
+        value = indent(group(concat([line, value])));
       }
       const target = group(concat(targetParts));
-      return concat([target, value]);
+      return group(concat([target, value, n.hardline ? hardline : ""]));
     }
 
     case "massign": {
@@ -1015,8 +1015,8 @@ function genericPrint(path, options, print) {
     }
 
     case "array": {
-      if (n.body === null) {
-        return "[]";
+      if (n.body === null || (n.body && n.body.length === 0)) {
+        return group(concat(["[", "]"]));
       }
       let parts = [];
       const type = n.array_type;
@@ -1025,8 +1025,15 @@ function genericPrint(path, options, print) {
           parts = group(
             concat([
               "[",
-              join(concat([", ", softline]), path.map(print, "body")),
-              "]"
+              indent(
+                group(
+                  concat([
+                    softline,
+                    join(concat([",", line]), path.map(print, "body"))
+                  ])
+                )
+              ),
+              concat([softline, dedent("]")])
             ])
           );
           break;

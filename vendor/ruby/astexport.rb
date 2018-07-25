@@ -126,11 +126,17 @@ class Processor
 
   def visit_assign(node)
     type, target, value = node
+    remove_space
+    (sLine, sColumn), _, _, start = current_token
     target = visit(target)
     remove_space
     remove_token("=")
+    remove_space
     value = visit_assign_value(value)
-    { ast_type: type, target: target, value: value }
+    remove_space
+    take_comment
+    (eLine, eColumn), _, _, _,sEnd = current_token
+    { ast_type: type, target: target, value: value, start: start, end: sEnd, hardline: hardline? }
   end
 
   def visit_opassign(node) 
@@ -151,48 +157,77 @@ class Processor
   def visit_array(node)
     type, body = node
     array_type = "normal"
-    remove_space_or_newline
-    if current_token_type === :on_qwords_beg
+    remove_space
+    (eLine, eColumn), _, _, start = current_token
+    if current_token_type == :on_qwords_beg
       take_token(:on_qwords_beg)
       array_type = "words"
       body = visit_q_or_i_elements(body)
-    elsif current_token_type === :on_qsymbols_beg
+      (eLine, eColumn), _, _, _, sEnd = current_token
+      remove_space
+      take_comment
+    elsif current_token_type == :on_qsymbols_beg
       take_token(:on_qsymbols_beg)
       array_type = "symbols"
       body = visit_q_or_i_elements(body)
+      (eLine, eColumn), _, _, _, sEnd = current_token
+      remove_space
+      take_comment
     else
       body = visit_literal_elements(body)
+      (eLine, eColumn), _, _, _, sEnd = current_token
+      remove_space
+      take_comment
     end
-    { ast_type: type, body: body, newline: line?, hardline: hardline?, array_type: array_type }
+    { ast_type: type, body: body, array_type: array_type, start: start, end: sEnd }
   end
 
   def visit_literal_elements(nodes)
     remove_token("[")
-    remove_space_or_newline
+    remove_space
+    take_comment
+    hardline?
     exprs = []
     unless nodes.nil?
       nodes.each do |exp|
         type, _ = exp
+        remove_space
+        take_comment
+        hardline?
         exprs << visit(exp) unless type == :void_stmt
-        remove_space_or_newline
+        remove_space
+        take_comment
+        hardline?
         remove_token(",") if current_token_type === :on_comma
-        remove_space_or_newline
+        remove_space
+        take_comment
+        hardline?
       end
     end
+    remove_space
+    take_comment
     remove_token("]")
     exprs
   end
 
   def visit_q_or_i_elements(nodes)
-    remove_space_or_newline
+    remove_space
+    take_comment
+    hardline?
     exprs = []
       nodes.each do |exp|
         type, _ = exp
         exprs << visit(exp) unless type == :void_stmt
-        remove_space_or_newline
+        remove_space
+        take_comment
+        hardline?
         take_token(:on_tstring_end) if current_token_type === :on_tstring_end
-        remove_space_or_newline
+        remove_space
+        take_comment
+        hardline?
       end
+    remove_space
+    take_comment
     exprs
   end
 
@@ -232,8 +267,10 @@ class Processor
     when :@int
       # [:@int, "123", [1, 0]]
       type, int = node
-      remove_token(int)
-      { ast_type: type, value: int }
+      remove_space
+      (line, column), _, _, start, sEnd = current_token
+      take_token(:on_int)
+      { ast_type: type, value: int, start: start, end: sEnd }
     when :@float
       # [:@float, "123.45", [1, 0]]
       type, float = node
@@ -332,7 +369,7 @@ class Processor
       args, local_args = visit_block_args(node)
       { ast_type: 'block_var', args: args, local_args: local_args }
     when :var_ref
-      { ast_type: 'var_ref', ref: visit(node[1]) }
+      { ast_type: 'var_ref', ref: visit(node[1]), hardline: hardline? }
     when :arg_paren
       type, args = node
 
@@ -722,14 +759,23 @@ class Processor
   def visit_def(node)
     type, name, params, body = node
     take_token(:on_kw)
+    remove_space
+    name = visit(name)
+    remove_space
     if params[0] == :paren
       params = visit(params[1])
     else
       remove_space
       params = visit(params)
     end
-    remove_space_or_newline
-    { ast_type: type, name: visit(name), params: params, bodystmt: visit(body) }
+    remove_space
+    take_comment
+    hardline?
+    body = visit(body)
+    remove_space
+    take_comment
+    hardline?
+    { ast_type: type, name: name, params: params, bodystmt: body }
   end
 
   def visit_return(node)
@@ -849,6 +895,8 @@ class Processor
     label_params = visit_label_params(label_params) if label_params
     double_star_param = visit(double_star_param) if double_star_param
     blockarg = visit(blockarg) if blockarg
+    take_comment
+    remove_space_or_newline
     {
       ast_type: type,
       pre_rest_params: pre_rest_params,
