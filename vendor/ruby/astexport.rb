@@ -354,6 +354,8 @@ class Processor
       { ast_type: type, regexp_end: regexp_end }
     when :string_literal, :xstring_literal
       visit_string_literal(node)
+    when :string_concat
+      visit_string_concat(node)
     when :string_content
       # [:string_content, exp]
       _, *exps = node
@@ -1027,6 +1029,11 @@ class Processor
       json[:here_doc_end] = hereDocEnd
     end
     json
+  end
+
+  def visit_string_concat(node)
+    type, left, right = node
+    { ast_type: type, left: visit(left), right: visit(right) }
   end
 
   def visit_unary(node)
