@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`strings.rb 1`] = `
+exports[`strings.rb - ruby-verify: strings.rb 1`] = `
 'hello world'
 "hello world"
 
@@ -9,6 +9,13 @@ exports[`strings.rb 1`] = `
 
 'hello\\nworld1'
 "hello\\nworld2"
+
+"hello " \\
+  "world"
+
+'hello ' \\
+  'world ' \\
+  'multiline'
 
 '\\n'
 "\\\\n"
@@ -33,6 +40,13 @@ exports[`strings.rb 1`] = `
 
 'hello\\nworld1'
 "hello\\nworld2"
+
+'hello ' \\
+  'world'
+
+'hello ' \\
+  'world ' \\
+  'multiline'
 
 '\\n'
 "\\\\n"

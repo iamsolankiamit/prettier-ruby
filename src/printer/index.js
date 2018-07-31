@@ -868,6 +868,14 @@ function genericPrint(path, options, print) {
       return concat(["#{", concat(path.map(print, "interpolations")), "}"]);
     }
 
+    case "string_concat": {
+      return concat([
+        path.call(print, "left"),
+        " \\",
+        indent(concat([hardline, path.call(print, "right")]))
+      ]);
+    }
+
     case "return0":
     case "return": {
       const value = path.call(print, "value");

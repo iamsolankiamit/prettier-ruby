@@ -7,6 +7,13 @@
 'hello\nworld1'
 "hello\nworld2"
 
+"hello " \
+  "world"
+
+'hello ' \
+  'world ' \
+  'multiline'
+
 '\n'
 "\\n"
 "\n"
