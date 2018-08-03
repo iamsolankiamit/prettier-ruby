@@ -9,15 +9,33 @@ class Processor
     @json = []
     @code = code
     @tokens = Ripper.lex(code)
-    @alltokens = Ripper.lex(code)
+    total = 0
+    currentLine = 0
+    lastCol = 0
+    t = @tokens.map do |n|
+      (line, col), _, value = n
+      if currentLine < line
+        total = lastCol
+        currentLine = line
+      end
+      start = total + col
+      n.push start
+      last = start + value.length
+      lastCol = last
+      n.push last
+      n
+    end
+    @alltokens = t.map { |t1| t1  }
+    @tokens = t
     @sexp = Ripper.sexp(code)
+    @comments = []
     @json = visit(@sexp)
-    @json[:comments] = []
     (token_line, _),  token = last_token
     last_token_is_END = token == :on___end__
     if last_token_is_END
       @json[:body] << { ast_type: "__END__", content: code.lines[token_line..-1] }
     end
+    @json[:comments] = @comments
   end
 
   def last_token
@@ -67,11 +85,23 @@ class Processor
   end
 
   def hardline?
-    hardline = line? && next_is_newline?
+    while( current_token_type === :on_nl)
+      next_token
+    end
+    hardline = current_token_type === :on_ignored_nl
     while(line?)
       next_token
     end
     hardline
+  end
+
+  def take_comment
+    while(current_token_type === :on_comment)
+      (line, column), type, value, start, sEnd = current_token
+      v = { ast_type: "comment", start: start, end: sEnd, loc: {start: {line: line, column: column}, end: {line: line, column: value.length}}, value: value }
+      @comments.push v
+      next_token
+    end
   end
 
   def remove_space_or_newline
@@ -96,11 +126,17 @@ class Processor
 
   def visit_assign(node)
     type, target, value = node
+    remove_space
+    (sLine, sColumn), _, _, start = current_token
     target = visit(target)
     remove_space
     remove_token("=")
+    remove_space
     value = visit_assign_value(value)
-    { ast_type: type, target: target, value: value }
+    remove_space
+    take_comment
+    (eLine, eColumn), _, _, _,sEnd = current_token
+    { ast_type: type, target: target, value: value, start: start, end: sEnd, hardline: hardline? }
   end
 
   def visit_opassign(node) 
@@ -121,48 +157,77 @@ class Processor
   def visit_array(node)
     type, body = node
     array_type = "normal"
-    remove_space_or_newline
-    if current_token_type === :on_qwords_beg
+    remove_space
+    (eLine, eColumn), _, _, start = current_token
+    if current_token_type == :on_qwords_beg
       take_token(:on_qwords_beg)
       array_type = "words"
       body = visit_q_or_i_elements(body)
-    elsif current_token_type === :on_qsymbols_beg
+      (eLine, eColumn), _, _, _, sEnd = current_token
+      remove_space
+      take_comment
+    elsif current_token_type == :on_qsymbols_beg
       take_token(:on_qsymbols_beg)
       array_type = "symbols"
       body = visit_q_or_i_elements(body)
+      (eLine, eColumn), _, _, _, sEnd = current_token
+      remove_space
+      take_comment
     else
       body = visit_literal_elements(body)
+      (eLine, eColumn), _, _, _, sEnd = current_token
+      remove_space
+      take_comment
     end
-    { ast_type: type, body: body, newline: line?, hardline: hardline?, array_type: array_type }
+    { ast_type: type, body: body, array_type: array_type, start: start, end: sEnd }
   end
 
   def visit_literal_elements(nodes)
     remove_token("[")
-    remove_space_or_newline
+    remove_space
+    take_comment
+    hardline?
     exprs = []
     unless nodes.nil?
       nodes.each do |exp|
         type, _ = exp
+        remove_space
+        take_comment
+        hardline?
         exprs << visit(exp) unless type == :void_stmt
-        remove_space_or_newline
+        remove_space
+        take_comment
+        hardline?
         remove_token(",") if current_token_type === :on_comma
-        remove_space_or_newline
+        remove_space
+        take_comment
+        hardline?
       end
     end
+    remove_space
+    take_comment
     remove_token("]")
     exprs
   end
 
   def visit_q_or_i_elements(nodes)
-    remove_space_or_newline
+    remove_space
+    take_comment
+    hardline?
     exprs = []
       nodes.each do |exp|
         type, _ = exp
         exprs << visit(exp) unless type == :void_stmt
-        remove_space_or_newline
+        remove_space
+        take_comment
+        hardline?
         take_token(:on_tstring_end) if current_token_type === :on_tstring_end
-        remove_space_or_newline
+        remove_space
+        take_comment
+        hardline?
       end
+    remove_space
+    take_comment
     exprs
   end
 
@@ -192,18 +257,20 @@ class Processor
       type, value = node
       take_token(:on_gvar)
       remove_space
-      { ast_type: type, value: value, newline: line?, hardline: hardline? }
+      { ast_type: type, value: value }
     when :@op
       # [:@op, "[]=", [1, 1]]
       type, value = node
       take_token(:on_op)
       remove_space
-      { ast_type: type, value: value, newline: line?, hardline: hardline? }
+      { ast_type: type, value: value }
     when :@int
       # [:@int, "123", [1, 0]]
       type, int = node
-      remove_token(int)
-      { ast_type: type, value: int }
+      remove_space
+      (line, column), _, _, start, sEnd = current_token
+      take_token(:on_int)
+      { ast_type: type, value: int, start: start, end: sEnd }
     when :@float
       # [:@float, "123.45", [1, 0]]
       type, float = node
@@ -222,12 +289,12 @@ class Processor
       { ast_type: type, value: char }
     when :@ident
       take_token(:on_ident)
-      { ast_type: '@ident', value: node[1], newline: line?, hardline: hardline? }
+      { ast_type: '@ident', value: node[1] }
     when :@kw
       take_token(:on_kw)
       # [:@kw, "nil", [1, 0]]
       type, value = node
-      { ast_type: type, value: value, newline: line?, hardline: hardline? }
+      { ast_type: type, value: value }
     when :@const
       # [:@const, "Constant", [1, 0]]
       type, value = node
@@ -302,7 +369,7 @@ class Processor
       args, local_args = visit_block_args(node)
       { ast_type: 'block_var', args: args, local_args: local_args }
     when :var_ref
-      { ast_type: 'var_ref', ref: visit(node[1]) }
+      { ast_type: 'var_ref', ref: visit(node[1]), hardline: hardline? }
     when :arg_paren
       type, args = node
 
@@ -523,12 +590,17 @@ class Processor
   def visit_alias(node)
     # [:alias, from, to]
     type, from, to = node
+    (startLine, startColumn), _, _, start = current_token
     take_token(:on_kw)
     remove_space
     from = visit(from)
     remove_space
     to = visit(to)
-    { ast_type: type, from: from, to: to }
+    remove_space
+    (endLine, endColumn), _, _, _, sEnd = current_token
+    take_comment
+    hardline = hardline?
+    { ast_type: type, from: from, to: to, hardline: hardline, start: start, end: sEnd,  loc: {start: {line: startLine, column: startColumn}, end: { line: endLine, column: endColumn}} }
   end
 
   def visit_BEGIN(node)
@@ -689,14 +761,23 @@ class Processor
   def visit_def(node)
     type, name, params, body = node
     take_token(:on_kw)
+    remove_space
+    name = visit(name)
+    remove_space
     if params[0] == :paren
       params = visit(params[1])
     else
       remove_space
       params = visit(params)
     end
-    remove_space_or_newline
-    { ast_type: type, name: visit(name), params: params, bodystmt: visit(body) }
+    remove_space
+    take_comment
+    hardline?
+    body = visit(body)
+    remove_space
+    take_comment
+    hardline?
+    { ast_type: type, name: name, params: params, bodystmt: body }
   end
 
   def visit_return(node)
@@ -816,6 +897,8 @@ class Processor
     label_params = visit_label_params(label_params) if label_params
     double_star_param = visit(double_star_param) if double_star_param
     blockarg = visit(blockarg) if blockarg
+    take_comment
+    remove_space_or_newline
     {
       ast_type: type,
       pre_rest_params: pre_rest_params,

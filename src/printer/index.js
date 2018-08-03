@@ -208,7 +208,7 @@ function genericPrint(path, options, print) {
     }
 
     case "@ident": {
-      return concat([n.value, n.hardline ? hardline : ""]);
+      return path.call(print, "value");
     }
 
     case "var_field": {
@@ -525,7 +525,7 @@ function genericPrint(path, options, print) {
           : path.call(print, "args");
       let finalBody = group(concat(["(", body, ")"]));
       const name = n.name && path.call(print, "name");
-      const value = name && name.parts[0];
+      const value = name;
       if (keywords.hasOwnProperty(value)) {
         finalBody = group(concat([" ", body]));
       }
@@ -602,7 +602,7 @@ function genericPrint(path, options, print) {
     }
 
     case "symbol": {
-      return concat([":", path.call(print, "symbol")]);
+      return group(concat([":", path.call(print, "symbol")]));
     }
 
     case "dyna_symbol": {
@@ -651,7 +651,8 @@ function genericPrint(path, options, print) {
         " ",
         path.call(print, "from"),
         " ",
-        path.call(print, "to")
+        path.call(print, "to"),
+        n.hardline ? hardline : ""
       ]);
     }
 
@@ -713,13 +714,13 @@ function genericPrint(path, options, print) {
       const targetParts = [];
       targetParts.push(path.call(print, "target"), line, "=");
       let value = group(path.call(print, "value"));
-      if (n.value.ast_type !== "hash") {
-        value = indent(group(concat([line, value])));
-      } else {
+      if (n.value.ast_type === "hash" || n.value.ast_type === "array") {
         targetParts.push(line);
+      } else {
+        value = indent(group(concat([line, value])));
       }
       const target = group(concat(targetParts));
-      return concat([target, value]);
+      return group(concat([target, value, n.hardline ? hardline : ""]));
     }
 
     case "massign": {
@@ -1022,8 +1023,8 @@ function genericPrint(path, options, print) {
     }
 
     case "array": {
-      if (n.body === null) {
-        return "[]";
+      if (n.body === null || (n.body && n.body.length === 0)) {
+        return group(concat(["[", "]"]));
       }
       let parts = [];
       const type = n.array_type;
@@ -1032,8 +1033,15 @@ function genericPrint(path, options, print) {
           parts = group(
             concat([
               "[",
-              join(concat([", ", softline]), path.map(print, "body")),
-              "]"
+              indent(
+                group(
+                  concat([
+                    softline,
+                    join(concat([",", line]), path.map(print, "body"))
+                  ])
+                )
+              ),
+              concat([softline, dedent("]")])
             ])
           );
           break;
