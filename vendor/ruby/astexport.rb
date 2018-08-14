@@ -32,7 +32,7 @@ class Processor
     _, token_type = current_token
     token_type
   end
-  
+
   def current_token_value
     _, _, value = current_token
     value
@@ -81,7 +81,7 @@ class Processor
   end
 
   def remove_space
-    while current_token_type === :on_sp 
+    while current_token_type === :on_sp
       next_token
     end
   end
@@ -103,7 +103,7 @@ class Processor
     { ast_type: type, target: target, value: value }
   end
 
-  def visit_opassign(node) 
+  def visit_opassign(node)
     type, target, op, value = node
     target = visit(target)
     remove_space
@@ -363,7 +363,7 @@ class Processor
     when :string_embexpr
       # [:string_content, exps]
       type, exps = node
-      
+
       take_token(:on_embexpr_beg)
       exps = visit_exps(exps)
       take_token(:on_embexpr_end)
@@ -409,6 +409,8 @@ class Processor
       visit_return(node)
     when :retry
       { ast_type: :retry }
+    when :begin
+      visit_begin(node)
     when :rescue
       visit_rescue(node)
     when :rescue_mod
@@ -549,6 +551,16 @@ class Processor
     # [:END, [:bodystmt, body, rescue_body, else_body, ensure_body]]
     type, bodystmt = node
     { ast_type: type, bodystmt: visit_exps(bodystmt)}
+  end
+
+  def visit_begin(node)
+    # begin
+    #   body
+    # end
+    #
+    # [:begin, [:bodystmt, body, rescue_body, else_body, ensure_body]]
+    type, bodystmt = node
+    { ast_type: type, bodystmt: visit_bodystmt(bodystmt)}
   end
 
   def visit_rescue(node)
@@ -1022,7 +1034,7 @@ class Processor
     take_token(:on_tstring_end)
     remove_space
     json = { ast_type: type, string_content: string_content, is_single_quote: is_single_quote, newline: line?, hardline: hardline? }
-    if(isHereDoc) 
+    if(isHereDoc)
       json[:is_here_doc] = true
       json[:here_doc_newline] = here_doc_newline
       json[:here_doc_type] = hereDocType
