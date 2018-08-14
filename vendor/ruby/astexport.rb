@@ -140,7 +140,9 @@ class Processor
     remove_token("[")
     remove_space_or_newline
     exprs = []
-    unless nodes.nil?
+    if [*nodes].first == :args_add_star then
+      exprs << visit_args_add_star(nodes)
+    elsif not nodes.nil?
       nodes.each do |exp|
         type, _ = exp
         exprs << visit(exp) unless type == :void_stmt
@@ -450,7 +452,7 @@ class Processor
       {
         ast_type: type,
         left: visit_exps(left),
-        star: visit(star),
+        star: star.nil? ? nil : visit(star),
         right: right.nil? ? nil : visit_exps(right)
       }
     when :lambda
