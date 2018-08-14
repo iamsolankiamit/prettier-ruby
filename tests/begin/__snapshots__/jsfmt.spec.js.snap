@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`begin.rb - ruby-verify: begin.rb 1`] = `
+def foo
+  begin
+    something_dangerous!
+  rescue => e
+    puts "Oops."
+  end
+end
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def foo
+  begin
+    something_dangerous!
+  rescue => e
+    puts 'Oops.'
+  end
+end
+
+`;

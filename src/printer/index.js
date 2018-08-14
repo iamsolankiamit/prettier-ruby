@@ -438,6 +438,15 @@ function genericPrint(path, options, print) {
       return "retry";
     }
 
+    case "begin": {
+      return concat([
+        "begin",
+        indent(concat([hardline, group(path.call(print, "bodystmt"))])),
+        hardline,
+        "end"
+      ]);
+    }
+
     case "rescue_mod": {
       return concat([
         path.call(print, "body"),
