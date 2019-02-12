@@ -1,3 +1,9 @@
+# Please Check the official repo here [prettier-plugin-ruby](https://github.com/prettier/plugin-ruby)
+
+This repo is deprecated 
+
+---
+
 # Prettier Ruby Plugin
 [![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors)
 
